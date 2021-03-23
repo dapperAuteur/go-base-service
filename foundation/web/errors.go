@@ -11,3 +11,10 @@ type ErrorResponse struct {
 	Error  string       `json:"error"`
 	Fields []FieldError `json:"fields,omitempty"`
 }
+
+// Error is used to add web info to a request error
+type Error struct {
+	Err    error
+	Status int
+	Fields []FieldError
+}
