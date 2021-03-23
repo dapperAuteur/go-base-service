@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"expvar"
 	"fmt"
 	"log"
@@ -124,6 +125,30 @@ func run(log *log.Logger) error {
 		log.Printf("main: API listening on %s", api.Addr)
 		serverErrors <- api.ListenAndServe()
 	}()
+
+	// =========================================================================
+	// Shutdown
+
+	// Blocking main and waiting for shutdown.
+	select {
+	case err := <-serverErrors:
+		return errors.Wrap(err, "server error")
+
+	case sig := <-shutdown:
+		log.Printf("main: %v: Start shutdown", sig)
+
+		// Give outstanding requests a deadline for completion.
+		ctx, cancel := context.WithTimeout(context.Background(), cfg.Web.ShutdownTimeout)
+		defer cancel()
+
+		// Asking listener to shutdown and shed load.
+		if err := api.Shutdown(ctx); err != nil {
+			api.Close()
+			return errors.Wrap(err, "could not stop server gracefully")
+		}
+
+		log.Printf("main: %v: Completed shutdown", sig)
+	}
 
 	return nil
 }
