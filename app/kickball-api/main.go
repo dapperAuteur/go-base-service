@@ -7,6 +7,8 @@ import (
 	"net/http"
 	_ "net/http/pprof"
 	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/ardanlabs/conf"
@@ -95,6 +97,23 @@ func run(log *log.Logger) error {
 			log.Printf("main: Debug Listener closed: %v", err)
 		}
 	}()
+
+	// =========================================================================
+	// Start API Service
+
+	log.Println("main: Initializing API support")
+
+	// Make a channel to listen for an interrupt or terminate signal from the OS.
+	// Use a buffered channel because the signal package requires it.
+	shutdown := make(chan os.Signal, 1)
+	signal.Notify(shutdown, os.Interrupt, syscall.SIGTERM)
+
+	api := http.Server{
+		Addr: cfg.Web.APIHost,
+		// Handler:      handlers.API(build, shutdown, log, auth, db),
+		ReadTimeout:  cfg.Web.ReadTimeout,
+		WriteTimeout: cfg.Web.WriteTimeout,
+	}
 
 	return nil
 }
