@@ -27,7 +27,7 @@ func Logger(log *log.Logger) web.Middleware {
 				return web.NewShutdownError("web value missing from context")
 			}
 
-			log.Printf("%s TraceID : started   : %s %s -> %s",
+			log.Printf("TraceID %s : started   : %s %s -> %s",
 				v.TraceID,
 				r.Method, r.URL.Path, r.RemoteAddr,
 			)
@@ -35,7 +35,7 @@ func Logger(log *log.Logger) web.Middleware {
 			// readiness from check.go
 			err := handler(ctx, w, r)
 
-			log.Printf("%s TraceID : completed : %s %s -> %s (%d) (%s)",
+			log.Printf("TraceID %s : completed : %s %s -> %s (%d) (%s)",
 				v.TraceID,
 				r.Method, r.URL.Path, r.RemoteAddr,
 				v.StatusCode, time.Since(v.Now),
