@@ -14,7 +14,7 @@ import (
 func Logger(log *log.Logger) web.Middleware {
 
 	// This is the actual middleware function to be executed.
-	m := func(before web.Handler) web.Handler {
+	m := func(both web.Handler) web.Handler {
 
 		// Create the handler that will be attached in the middleware chain.
 		h := func(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
@@ -27,15 +27,15 @@ func Logger(log *log.Logger) web.Middleware {
 				return web.NewShutdownError("web value missing from context")
 			}
 
-			log.Printf("%s: started: %s %s -> %s",
+			log.Printf("%s: started : %s %s -> %s",
 				v.TraceID,
 				r.Method, r.URL.Path, r.RemoteAddr,
 			)
 
 			// readiness from check.go
-			err := before(ctx, w, r)
+			err := both(ctx, w, r)
 
-			log.Printf("%s: completed: %s %s -> %s (%d) (%s)",
+			log.Printf("%s: completed : %s %s -> %s (%d) (%s)",
 				v.TraceID,
 				r.Method, r.URL.Path, r.RemoteAddr,
 				v.StatusCode, time.Since(v.Now),
