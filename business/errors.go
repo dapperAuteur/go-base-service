@@ -32,6 +32,11 @@ func Errors(log *log.Logger) web.Middleware {
 				// Log the error.
 				log.Printf("TraceID %s: ERROR : %v", v.TraceID, err)
 
+				// Respond with the error back to the client.
+				if err := web.Respond(ctx, w, er); err != nil {
+					return err
+				}
+
 			return nil
 		}
 		return h
