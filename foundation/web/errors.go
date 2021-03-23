@@ -28,3 +28,8 @@ func NewRequestError(err error, status int) error {
 func (e *Error) Error() string {
 	return e.Err.Error()
 }
+
+// shutdown is a type used to help with the graceful termination of the service.
+type shutdown struct {
+	Message string
+}
