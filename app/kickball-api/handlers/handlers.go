@@ -16,6 +16,10 @@ func API(build string, shutdown chan os.Signal, log *log.Logger) *httptreemux.Co
 
 	tm := httptreemux.NewContextMux()
 
+	check := check{
+		log: log,
+	}
+
 	h := func(w http.ResponseWriter, r *http.Request) {
 		status := struct {
 			Status string
@@ -25,6 +29,6 @@ func API(build string, shutdown chan os.Signal, log *log.Logger) *httptreemux.Co
 		json.NewEncoder(w).Encode(status)
 	}
 
-	tm.Handle(http.MethodGet, "/test", readiness)
+	tm.Handle(http.MethodGet, "/test", check.readiness)
 	return tm
 }
