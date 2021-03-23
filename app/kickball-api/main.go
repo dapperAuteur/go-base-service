@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/ardanlabs/conf"
+	"github.com/dapperauteur/go-base-service/app/kickball-api/handlers"
 	"github.com/pkg/errors"
 )
 
