@@ -14,7 +14,7 @@ import (
 func Logger(log *log.Logger) web.Middleware {
 
 	// This is the actual middleware function to be executed.
-	m := func(both web.Handler) web.Handler {
+	m := func(beforeAfter web.Handler) web.Handler {
 
 		// Create the handler that will be attached in the middleware chain.
 		h := func(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
@@ -33,7 +33,7 @@ func Logger(log *log.Logger) web.Middleware {
 			)
 
 			// readiness from check.go
-			err := both(ctx, w, r)
+			err := beforeAfter(ctx, w, r)
 
 			log.Printf("%s: completed : %s %s -> %s (%d) (%s)",
 				v.TraceID,
