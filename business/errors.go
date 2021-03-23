@@ -29,6 +29,9 @@ func Errors(log *log.Logger) web.Middleware {
 			// Run the next handler and catch any propagated error.
 			if err := handler(ctx, w, r); err != nil {
 
+				// Log the error.
+				log.Printf("%s: ERROR: %v", v.TraceID, err)
+
 			return nil
 		}
 		return h
