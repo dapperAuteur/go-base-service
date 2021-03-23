@@ -12,7 +12,7 @@ import (
 )
 
 // API constructs an http.Handler with all application routes defined.
-func API(build string, shutdown chan os.Signal, log *log.Logger) http.Handler {
+func API(build string, shutdown chan os.Signal, log *log.Logger) *httptreemux.ContextMux {
 
 	tm := httptreemux.NewContextMux()
 
