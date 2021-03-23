@@ -33,3 +33,14 @@ func (e *Error) Error() string {
 type shutdown struct {
 	Message string
 }
+
+// Error is the implementation of the error interface.
+func (s *shutdown) Error() string {
+	return s.Message
+}
+
+// NewShutdownError returns an error that causes the framework to signal
+// a graceful shutdown.
+func NewShutdownError(message string) error {
+	return &shutdown{message}
+}
