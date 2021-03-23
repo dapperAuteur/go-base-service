@@ -27,6 +27,12 @@ func Metrics() web.Middleware {
 
 		// Create the handler that will be attached in the middleware chain.
 		h := func(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
+
+			// Call the next handler.
+			err := handler(ctx, w, r)
+
+			// Increment the request counter.
+			m.req.Add(1)
 		}
 		return h
 	}
