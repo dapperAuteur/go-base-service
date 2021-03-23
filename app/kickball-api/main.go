@@ -115,5 +115,15 @@ func run(log *log.Logger) error {
 		WriteTimeout: cfg.Web.WriteTimeout,
 	}
 
+	// Make a channel to listen for errors coming from the listener. Use a
+	// buffered channel so the goroutine can exit if we don't collect this error.
+	serverErrors := make(chan error, 1)
+
+	// Start the service listening for requests.
+	go func() {
+		log.Printf("main: API listening on %s", api.Addr)
+		serverErrors <- api.ListenAndServe()
+	}()
+
 	return nil
 }
