@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"runtime/debug"
 
-	"github.com/ardanlabs/service/foundation/web"
+	"github.com/dapperauteur/go-base-service/foundation/web"
 	"github.com/pkg/errors"
 )
 
@@ -31,7 +31,7 @@ func Panics(log *log.Logger) web.Middleware {
 			// variable after the fact.
 			defer func() {
 				if r := recover(); r != nil {
-					err = errors.Errorf("panic: %v", r)
+					err = errors.Errorf("PANIC: %v", r)
 
 					// Log the Go stack trace for this panic'd goroutine.
 					log.Printf("TraceID %s : PANIC     :\n%s", v.TraceID, debug.Stack())
