@@ -4,6 +4,7 @@ import (
 	"context"
 	"expvar"
 	"net/http"
+	"runtime"
 
 	"github.com/dapperauteur/go-base-service/foundation/web"
 )
@@ -33,6 +34,12 @@ func Metrics() web.Middleware {
 
 			// Increment the request counter.
 			m.req.Add(1)
+
+			// Update the count for the number of active goroutines every 100 requests.
+			if m.req.Value()%100 == 0 {
+				m.gr.Set(int64(runtime.NumGoroutine()))
+			}
+
 		}
 		return h
 	}
