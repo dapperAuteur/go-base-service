@@ -25,6 +25,6 @@ func API(build string, shutdown chan os.Signal, log *log.Logger) *httptreemux.Co
 		json.NewEncoder(w).Encode(status)
 	}
 
-	tm.Handle(http.MethodGet, "/test", h)
+	tm.Handle(http.MethodGet, "/test", readiness)
 	return tm
 }
