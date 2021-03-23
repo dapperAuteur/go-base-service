@@ -33,9 +33,17 @@ func Errors(log *log.Logger) web.Middleware {
 				log.Printf("TraceID %s: ERROR : %v", v.TraceID, err)
 
 				// Respond with the error back to the client.
-				if err := web.Respond(ctx, w, er); err != nil {
+				if err := web.Respond(ctx, w, err, 500); err != nil {
 					return err
 				}
+
+				// ADD MORE LOGIC TO DETERMINE THIS ACTION.
+				// If we receive the shutdown err we need to return it
+				// back to the base handler to shutdown the service.
+				if ok := web.IsShutdown(err); ok {
+					return err
+				}
+			}
 
 			return nil
 		}
