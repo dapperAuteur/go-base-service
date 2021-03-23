@@ -16,6 +16,16 @@ import (
 	"github.com/pkg/errors"
 )
 
+/*
+Need to figure out timeouts for http service.
+You might want to reset your DB_HOST env var during
+test tear down.
+Service should start even without a DB running yet.
+symbols in profiles:
+https://github.com/golang/go/issues/23376 /
+https://github.com/google/pprof/pull/366
+*/
+
 // build is the git version of this program. It is set using build flags in the makefile.
 var build = "develop"
 
@@ -36,8 +46,8 @@ func run(log *log.Logger) error {
 	var cfg struct {
 		conf.Version
 		Web struct {
-			Address         string        `conf:"default:0.0.0.0:3000"`
-			Debug           string        `conf:"default:0.0.0.0:4000"`
+			APIHost         string        `conf:"default:0.0.0.0:3000"`
+			DebugHost       string        `conf:"default:0.0.0.0:4000"`
 			ReadTimeout     time.Duration `conf:"default:5s"`
 			WriteTimeout    time.Duration `conf:"default:5s"`
 			ShutdownTimeout time.Duration `conf:"default:5s"`
