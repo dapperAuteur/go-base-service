@@ -1,5 +1,7 @@
 package web
 
+import "github.com/pkg/errors"
+
 // FieldError is used to indicate an error with a specific request field.
 type FieldError struct {
 	Field string `json:"field"`
@@ -43,4 +45,13 @@ func (s *shutdown) Error() string {
 // a graceful shutdown.
 func NewShutdownError(message string) error {
 	return &shutdown{message}
+}
+
+// IsShutdown checks to see if the shutdown error is contained
+// in the specified error value.
+func IsShutdown(err error) bool {
+	if _, ok := errors.Cause(err).(*shutdown); ok {
+		return true
+	}
+	return false
 }
