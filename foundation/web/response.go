@@ -48,7 +48,7 @@ func Respond(ctx context.Context, w http.ResponseWriter, data interface{}, statu
 }
 
 // RespondError sends an error reponse back to the client.
-func RespondError(w http.ResponseWriter, err error) error {
+func RespondError(ctx context.Context, w http.ResponseWriter, err error) error {
 
 	// If the error was of the type *Error, the handler has
 	// a specific status code and error to return.
