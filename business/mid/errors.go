@@ -30,7 +30,7 @@ func Errors(log *log.Logger) web.Middleware {
 			if err := handler(ctx, w, r); err != nil {
 
 				// Log the error.
-				log.Printf("TraceID %s: ERROR : %v", v.TraceID, err)
+				log.Printf("TraceID %s : ERROR     : %v", v.TraceID, err)
 
 				// Respond with the error back to the client.
 				if err := web.Respond(ctx, w, err, 500); err != nil {

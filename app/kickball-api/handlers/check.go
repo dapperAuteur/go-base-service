@@ -2,7 +2,9 @@ package handlers
 
 import (
 	"context"
+	"errors"
 	"log"
+	"math/rand"
 	"net/http"
 
 	"github.com/dapperauteur/go-base-service/foundation/web"
@@ -13,6 +15,15 @@ type check struct {
 }
 
 func (c check) readiness(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
+
+	// to simulate error
+	// trusted error
+	if n := rand.Intn(100); n%2 == 0 {
+		// return web.NewRequestError(errors.New("trusted error"), http.StatusBadRequest)
+		// untrusted error
+		return errors.New("untrusted error")
+	}
+
 	status := struct {
 		Status string
 	}{
