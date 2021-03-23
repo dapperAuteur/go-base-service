@@ -40,6 +40,11 @@ func Metrics() web.Middleware {
 				m.gr.Set(int64(runtime.NumGoroutine()))
 			}
 
+			// Increment the errors counter if an error occurred on this request.
+			if err != nil {
+				m.err.Add(1)
+			}
+
 		}
 		return h
 	}
