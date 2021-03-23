@@ -62,5 +62,14 @@ func RespondError(w http.ResponseWriter, err error) error {
 		}
 		return nil
 	}
+
+	// If not, the handler sent any arbitrary error value so use 500.
+	er := ErrorResponse{
+		Error: http.StatusText(http.StatusInternalServerError),
+	}
+	if err := Respond(ctx, w, er, http.StatusInternalServerError); err != nil {
+		return err
+	}
+
 	return nil
 }
