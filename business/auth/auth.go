@@ -57,11 +57,18 @@ A key lookup function is required for creating an Authenticator.
 */
 type PublicKeyLookup func(kid string) *rsa.PublicKey
 
+// KeyLookup declares a method set of behavior for looking up
+// private and public keys for JWT use.
+type KeyLookup interface {
+	PrivateKey(kid string) (*rsa.PrivateKey, error)
+	PublicKey(kid string) (*rsa.PublicKey, error)
+}
+
 // Auth is used to authenticate clients. It can generate a token for a
 // set of user claims and recreate the claims by parsing the token.
 type Auth struct {
 	algorithm string
-	// keyLookup KeyLookup
+	keyLookup KeyLookup
 	// method    jwt.SigningMethod
 	keyFunc func(t *jwt.Token) (interface{}, error)
 	parser  *jwt.Parser
@@ -69,7 +76,7 @@ type Auth struct {
 }
 
 // New creates an *Auth to support authentication/authorization.
-func New(algorithm string, lookup PublicKeyLookup, keys Keys) (*Auth, error) {
+func New(algorithm string, keyLookup KeyLookup) (*Auth, error) {
 	if jwt.GetSigningMethod(algorithm) == nil {
 		return nil, errors.Errorf("unknown algorithm %v", algorithm)
 	}
@@ -83,7 +90,7 @@ func New(algorithm string, lookup PublicKeyLookup, keys Keys) (*Auth, error) {
 		if !ok {
 			return nil, errors.New("user token key id (kid) must be string")
 		}
-		return lookup(kidID), nil
+		return keyLookup.PublicKey(kidID)
 	}
 
 	// Create the token parser to use. The algorithm used to sign the JWT must be
@@ -99,7 +106,7 @@ func New(algorithm string, lookup PublicKeyLookup, keys Keys) (*Auth, error) {
 		// method:    method,
 		keyFunc: keyFunc,
 		parser:  &parser,
-		keys:    keys,
+		// keys:    keys,
 	}
 
 	return &a, nil
