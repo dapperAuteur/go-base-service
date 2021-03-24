@@ -115,3 +115,24 @@ func (a *Auth) AddKey(privateKey *rsa.PrivateKey, kid string) {
 func (a *Auth) RemoveKey(kid string) {
 	delete(a.keys, kid)
 }
+
+// GenerateToken generates a signed JWT token string representing the user Claims.
+func (a *Auth) GenerateToken(kid string, claims Claims) (string, error) {
+
+	method := jwt.GetSigningMethod("RS256")
+
+	tkn := jwt.NewWithClaims(method, claims)
+	tkn.Header["kid"] = kid
+
+	privateKey, ok := a.keys[kid]
+	if !ok {
+		return "", errors.New("kid lookup failed")
+	}
+
+	str, err := tkn.SignedString(privateKey)
+	if err != nil {
+		return "", errors.Wrap(err, "signing token")
+	}
+
+	return str, nil
+}
