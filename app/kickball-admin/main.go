@@ -73,5 +73,5 @@ func keygen() {
 	}
 
 	fmt.Println("private and public key files generated")
-	return nil
+	return
 }
