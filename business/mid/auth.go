@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"net/http"
+	"strings"
 
 	"github.com/dapperauteur/go-base-service/business/auth"
 	"github.com/dapperauteur/go-base-service/foundation/web"
@@ -23,7 +24,31 @@ func Authenticate(a *auth.Auth) web.Middleware {
 
 		// Create the handler that will be attached in the middleware chain.
 		h := func(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
-			return nil
+
+			// Expecting: bearer <token>
+			authStr := r.Header.Get("authorization")
+
+			// Parse the authorization header.
+			// Expected header is of the format `Bearer <token>`.
+			parts := strings.Split(authStr, " ")
+			if len(parts) != 2 || strings.ToLower(parts[0]) != "bearer" {
+				err := errors.New("expected authorization header format: Bearer <token>")
+				// log.Fatalln(err)
+				return web.NewRequestError(err, http.StatusUnauthorized)
+
+			}
+
+			// Validate the token is signed by us.
+			claims, err := a.ValidateToken(parts[1])
+			if err != nil {
+				return validate.NewRequestError(err, http.StatusUnauthorized)
+			}
+
+			// Add claims to the context so they can be retrieved later.
+			ctx = context.WithValue(ctx, auth.Key, claims)
+
+			// Call the next handler.
+			return handler(ctx, w, r)
 		}
 		return h
 	}
@@ -39,6 +64,7 @@ func Authorize(roles ...string) web.Middleware {
 
 		// Create the handler that will be attached in the middleware chain.
 		h := func(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
+
 			return nil
 		}
 		return h
