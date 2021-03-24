@@ -85,4 +85,33 @@ func New(algorithm string, lookup PublicKeyLookup, keys Keys) (*Auth, error) {
 		}
 		return lookup(kidID)
 	}
+
+	// Create the token parser to use. The algorithm used to sign the JWT must be
+	// validated to avoid a critical vulnerability:
+	// https://auth0.com/blog/critical-vulnerabilities-in-json-web-token-libraries/
+	parser := jwt.Parser{
+		ValidMethods: []string{algorithm},
+	}
+
+	a := Auth{
+		algorithm: algorithm,
+		// keyLookup: keyLookup,
+		// method:    method,
+		keyFunc: keyFunc,
+		parser:  &parser,
+		keys:    keys,
+	}
+
+	return &a, nil
+
+}
+
+// AddKey adds a private key and combination kid id to our local store.
+func (a *Auth) AddKey(privateKey *rsa.PrivateKey, kid string) {
+	a.keys[kid] = privateKey
+}
+
+// RemoveKey removes a private key and combination kid id from our local store.
+func (a *Auth) RemoveKey(kid string) {
+	delete(a.keys, kid)
 }
