@@ -8,7 +8,8 @@ import (
 	"time"
 
 	"github.com/dapperauteur/go-base-service/business/auth"
-	"github.com/dgrijalva/jwt-go/v4"
+	"github.com/dgrijalva/jwt-go"
+	// "github.com/dgrijalva/jwt-go/v4"
 )
 
 // Success and failure markers.
@@ -51,8 +52,8 @@ func TestAuth(t *testing.T) {
 					Issuer:    "go-base-service project",
 					Subject:   "5cf37266-3473-4006-984f-9325122678b7",
 					Audience:  "students",
-					ExpiresAt: jwt.At(time.Now().Add(8760 * time.Hour)),
-					IssuedAt:  jwt.Now(),
+					ExpiresAt: time.Now().Add(8760 * time.Hour).Unix(),
+					IssuedAt:  time.Now().Unix(),
 				},
 				Roles: []string{auth.RoleAdmin},
 			}
