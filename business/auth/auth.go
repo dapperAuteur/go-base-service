@@ -22,3 +22,15 @@ type Claims struct {
 	jwt.StandardClaims
 	Roles []string `json:"roles"`
 }
+
+// Authorized returns true if the claims has at least one of the provided roles.
+func (c Claims) Authorized(roles ...string) bool {
+	for _, has := range c.Roles {
+		for _, want := range roles {
+			if has == want {
+				return true
+			}
+		}
+	}
+	return false
+}
