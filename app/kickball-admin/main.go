@@ -52,7 +52,7 @@ func tokengen() {
 			Issuer:    "go-base-service project",
 			Subject:   "12343589",
 			ExpiresAt: time.Now().Add(8760 * time.Hour).Unix(),
-			IssuedAt:  jwt.Now().Unix(),
+			IssuedAt:  time.Now().Unix(),
 		},
 		Authorized: []string{"ADMIN"},
 	}
