@@ -4,7 +4,9 @@ package auth
 import (
 	"crypto/rsa"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/dgrijalva/jwt-go/v4"
+	"github.com/pkg/errors"
 )
 
 // These are the expected values for Claims.Roles.
@@ -54,3 +56,33 @@ A key lookup function is required for creating an Authenticator.
  See https://auth0.com/docs/jwks for more details.
 */
 type PublicKeyLookup func(kid string) (*rsa.PublicKey, err)
+
+// Auth is used to authenticate clients. It can generate a token for a
+// set of user claims and recreate the claims by parsing the token.
+type Auth struct {
+	algorithm string
+	// keyLookup KeyLookup
+	// method    jwt.SigningMethod
+	keyFunc func(t *jwt.Token) (interface{}, error)
+	parser  *jwt.Parser
+	keys    Keys
+}
+
+// New creates an Auth to support authentication/authorization.
+func New(algorithm string, lookup PublicKeyLookup, keys Keys) (*Auth, error) {
+	if jwt.GetSigningMethod(algorithm) == nil {
+		return nil, errors.Errorf("unknown algorithm %v", algorithm)
+	}
+
+	keyFunc := func(t *jwt.Token) (interface{}, error) {
+		kid, ok := t.Header["kid"]
+		if !ok {
+			return nil, errors.New("missing key id (kid) in token header")
+		}
+		kidID, ok := kid.(string)
+		if !ok {
+			return nil, errors.New("user token key id (kid) must be string")
+		}
+		return lookup(kidID)
+	}
+}
