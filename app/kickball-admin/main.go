@@ -58,10 +58,10 @@ func tokengen() {
 	}
 
 	method := jwt.GetSigningMethod("RS256")
-	tkn := jwt.NewWithClaims(method, claims)
-	tkn.Header["kid"] = "a.publicKID"
+	token := jwt.NewWithClaims(method, claims)
+	token.Header["kid"] = "a.publicKID"
 
-	str, err := tkn.SignedString(privateKey)
+	str, err := token.SignedString(privateKey)
 	if err != nil {
 		log.Fatalln(err)
 	}
