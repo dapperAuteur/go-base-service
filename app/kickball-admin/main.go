@@ -5,6 +5,7 @@ import (
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
+	"fmt"
 	"log"
 	"os"
 )
@@ -47,4 +48,30 @@ func keygen() {
 
 	// ================================
 
+	// Marshal the public key from the private key to PKIX.
+	asn1Bytes, err := x509.MarshalPKIXPublicKey(&privateKey.PublicKey)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	// Create a file for the public key information in PEM form.
+	publicFile, err := os.Create("public.pem")
+	if err != nil {
+		log.Fatalln(err)
+	}
+	defer publicFile.Close()
+
+	// Construct a PEM block for the public key.
+	publicBlock := pem.Block{
+		Type:  "RSA PUBLIC KEY",
+		Bytes: asn1Bytes,
+	}
+
+	// Write the public key to the private key file.
+	if err := pem.Encode(publicFile, &publicBlock); err != nil {
+		log.Fatalln(err)
+	}
+
+	fmt.Println("private and public key files generated")
+	return nil
 }
