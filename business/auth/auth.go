@@ -5,7 +5,7 @@ import (
 	"crypto/rsa"
 
 	"github.com/dgrijalva/jwt-go"
-	"github.com/dgrijalva/jwt-go/v4"
+	// "github.com/dgrijalva/jwt-go/v4"
 	"github.com/pkg/errors"
 )
 
@@ -55,7 +55,7 @@ A key lookup function is required for creating an Authenticator.
  * KID to public key resolution is usually accomplished via a public JWKS endpoint.
  See https://auth0.com/docs/jwks for more details.
 */
-type PublicKeyLookup func(kid string) (*rsa.PublicKey, err)
+type PublicKeyLookup func(kid string) *rsa.PublicKey
 
 // Auth is used to authenticate clients. It can generate a token for a
 // set of user claims and recreate the claims by parsing the token.
@@ -68,7 +68,7 @@ type Auth struct {
 	keys    Keys
 }
 
-// New creates an Auth to support authentication/authorization.
+// New creates an *Auth to support authentication/authorization.
 func New(algorithm string, lookup PublicKeyLookup, keys Keys) (*Auth, error) {
 	if jwt.GetSigningMethod(algorithm) == nil {
 		return nil, errors.Errorf("unknown algorithm %v", algorithm)
@@ -83,7 +83,7 @@ func New(algorithm string, lookup PublicKeyLookup, keys Keys) (*Auth, error) {
 		if !ok {
 			return nil, errors.New("user token key id (kid) must be string")
 		}
-		return lookup(kidID)
+		return lookup(kidID), nil
 	}
 
 	// Create the token parser to use. The algorithm used to sign the JWT must be
