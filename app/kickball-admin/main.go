@@ -6,8 +6,11 @@ import (
 	"crypto/x509"
 	"encoding/pem"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
+
+	"github.com/dgrijalva/jwt-go"
 )
 
 /*
@@ -16,8 +19,43 @@ import (
 */
 
 func main() {
-	keygen()
+	// keygen()
 
+	tokengen()
+
+}
+
+func tokengen() {
+	privatePEM, err := ioutil.ReadFile("/Users/awe/Coding/repos/my-repos/go-base-service/private.pem")
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	privateKey, err := jwt.ParseRSAPrivateKeyFromPEM(privatePEM)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	// iss (issuer): Issuer of the JWT
+	// sub (subject): Subject of the JWT (the user)
+	// aud (audience): Recipient for which the JWT is intended
+	// exp (expiration time): Time after which the JWT expires
+	// nbf (not before time): Time before which the JWT must not be accepted for processing
+	// iat (issued at time): Time at which the JWT was issued; can be used to determine age of the JWT
+	// jti (JWT ID): Unique identifier; can be used to prevent the JWT from being replayed (allows a token to be used only once)
+	claims := struct {
+		jwt.StandardClaims
+		Authorized []string
+	}{
+		jwt.StandardClaims{
+		Issuer:    "go-base-service project",
+		Subject:   "12343589",
+		ExpiresAt: time.Now().Add(8760 * time.Hour)*Unix(),
+		IssuedAt:  jwt.Now(),
+	},
+	Authorized: []string{"ADMIN"},
+
+	method := jwt.GetSigningMethod(a.algorithm)
 }
 
 func keygen() {
