@@ -9,6 +9,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"time"
 
 	"github.com/dgrijalva/jwt-go"
 )
@@ -47,15 +48,26 @@ func tokengen() {
 		jwt.StandardClaims
 		Authorized []string
 	}{
-		jwt.StandardClaims{
-		Issuer:    "go-base-service project",
-		Subject:   "12343589",
-		ExpiresAt: time.Now().Add(8760 * time.Hour)*Unix(),
-		IssuedAt:  jwt.Now(),
-	},
-	Authorized: []string{"ADMIN"},
+		StandardClaims: jwt.StandardClaims{
+			Issuer:    "go-base-service project",
+			Subject:   "12343589",
+			ExpiresAt: time.Now().Add(8760 * time.Hour).Unix(),
+			IssuedAt:  jwt.Now().Unix(),
+		},
+		Authorized: []string{"ADMIN"},
+	}
 
-	method := jwt.GetSigningMethod(a.algorithm)
+	method := jwt.GetSigningMethod("RS256")
+	tkn := jwt.NewWithClaims(method, claims)
+
+	str, err := tkn.SignedString(privateKey)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	fmt.Println("***** START TOKEN *****")
+	fmt.Println(str)
+	fmt.Println("***** END TOKEN *****")
 }
 
 func keygen() {
