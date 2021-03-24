@@ -5,6 +5,11 @@ run:
 
 runadmin:
 	go run app/kickball-admin/main.go
+
+test:
+	go test -v ./... -count=1
+	staticcheck ./...
+	
 tidy:
 	go mod tidy
 	go mod vendor
