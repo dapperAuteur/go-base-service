@@ -121,18 +121,34 @@ func (a *Auth) GenerateToken(kid string, claims Claims) (string, error) {
 
 	method := jwt.GetSigningMethod("RS256")
 
-	tkn := jwt.NewWithClaims(method, claims)
-	tkn.Header["kid"] = kid
+	token := jwt.NewWithClaims(method, claims)
+	token.Header["kid"] = kid
 
 	privateKey, ok := a.keys[kid]
 	if !ok {
 		return "", errors.New("kid lookup failed")
 	}
 
-	str, err := tkn.SignedString(privateKey)
+	str, err := token.SignedString(privateKey)
 	if err != nil {
 		return "", errors.Wrap(err, "signing token")
 	}
 
 	return str, nil
+}
+
+// ValidateToken recreates the Claims that were used to generate a token. It
+// verifies that the token was signed using our key.
+func (a *Auth) ValidateToken(tokenStr string) (Claims, error) {
+	var claims Claims
+	token, err := a.parser.ParseWithClaims(tokenStr, &claims, a.keyFunc)
+	if err != nil {
+		return Claims{}, errors.Wrap(err, "parsing token")
+	}
+
+	if !token.Valid {
+		return Claims{}, errors.New("invalid token")
+	}
+
+	return claims, nil
 }
