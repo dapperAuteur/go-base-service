@@ -13,7 +13,7 @@ import (
 	"time"
 
 	"github.com/ardanlabs/conf"
-	"github.com/dapperauteur/go-base-service/app/kickball-api/handlers"
+	"github.com/dapperauteur/go-base-service/app/service-api/handlers"
 	"github.com/pkg/errors"
 )
 
@@ -31,7 +31,7 @@ https://github.com/google/pprof/pull/366
 var build = "develop"
 
 func main() {
-	log := log.New(os.Stdout, "KICKBALL : ", log.LstdFlags|log.Lmicroseconds|log.Lshortfile)
+	log := log.New(os.Stdout, "SERVICE : ", log.LstdFlags|log.Lmicroseconds|log.Lshortfile)
 
 	if err := run(log); err != nil {
 		log.Println("main: error: ", err)
@@ -53,22 +53,28 @@ func run(log *log.Logger) error {
 			WriteTimeout    time.Duration `conf:"default:5s"`
 			ShutdownTimeout time.Duration `conf:"default:5s"`
 		}
+		Auth struct {
+			// KeyID string `conf:"default:zarf/keys/"`
+			KeyID          string `conf:"default:/Users/awe/Coding/repos/my-repos/go-base-service/private.pem"`
+			PrivateKeyFile string `conf:"default:zarf/keys/"`
+			Algorithm      string `conf:"default:RS256"`
+		}
 	}
 
 	cfg.Version.SVN = build
 	cfg.Version.Desc = "copyright information here"
 
-	if err := conf.Parse(os.Args[1:], "KICKBALL", &cfg); err != nil {
+	if err := conf.Parse(os.Args[1:], "SERVICE", &cfg); err != nil {
 		switch err {
 		case conf.ErrHelpWanted:
-			usage, err := conf.Usage("KICKBALL", &cfg)
+			usage, err := conf.Usage("SERVICE", &cfg)
 			if err != nil {
 				return errors.Wrap(err, "generating config usage")
 			}
 			fmt.Println(usage)
 			return nil
 		case conf.ErrVersionWanted:
-			version, err := conf.VersionString("KICKBALL", &cfg)
+			version, err := conf.VersionString("SERVICE", &cfg)
 			if err != nil {
 				return errors.Wrap(err, "generating config version")
 			}
