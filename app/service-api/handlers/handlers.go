@@ -18,7 +18,8 @@ func API(build string, shutdown chan os.Signal, log *log.Logger, a *auth.Auth) *
 	app := web.NewApp(shutdown, mid.Logger(log), mid.Errors(log), mid.Panics(log))
 
 	check := check{
-		log: log,
+		build: build,
+		log:   log,
 	}
 
 	app.Handle(http.MethodGet, "/readiness", check.readiness, mid.Authenticate(a), mid.Authorize(log, auth.RoleAdmin))
