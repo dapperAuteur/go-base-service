@@ -46,6 +46,9 @@ kind-status-full:
 kind-logs:
 	kubectl logs -lapp=service-api --all-containers=true -f
 
+kind-service-api: service-api
+	kind load docker-image service-api-amd64:1.0 --name awe-ful-starter-cluster kubectl delete pods -lapp=service-api
+
 # ==============================================
 run:
 	go run app/service-api/main.go
