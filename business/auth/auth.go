@@ -55,20 +55,20 @@ A key lookup function is required for creating an Authenticator.
  * KID to public key resolution is usually accomplished via a public JWKS endpoint.
  See https://auth0.com/docs/jwks for more details.
 */
-type PublicKeyLookup func(kid string) *rsa.PublicKey
+type PublicKeyLookup func(kid string) (*rsa.PublicKey, error)
 
 // KeyLookup declares a method set of behavior for looking up
 // private and public keys for JWT use.
-type KeyLookup interface {
-	PrivateKey(kid string) (*rsa.PrivateKey, error)
-	PublicKey(kid string) (*rsa.PublicKey, error)
-}
+// type KeyLookup interface {
+// 	// PrivateKey(kid string) (*rsa.PrivateKey, error)
+// 	PublicKey(kid string) (*rsa.PublicKey, error)
+// }
 
 // Auth is used to authenticate clients. It can generate a token for a
 // set of user claims and recreate the claims by parsing the token.
 type Auth struct {
 	algorithm string
-	keyLookup KeyLookup
+	// keyLookup KeyLookup
 	// method    jwt.SigningMethod
 	keyFunc func(t *jwt.Token) (interface{}, error)
 	parser  *jwt.Parser
@@ -76,7 +76,8 @@ type Auth struct {
 }
 
 // New creates an *Auth to support authentication/authorization.
-func New(algorithm string, keyLookup KeyLookup) (*Auth, error) {
+// func New(algorithm string, keyLookup KeyLookup) (*Auth, error) {
+func New(algorithm string, lookup PublicKeyLookup, keys Keys) (*Auth, error) {
 	if jwt.GetSigningMethod(algorithm) == nil {
 		return nil, errors.Errorf("unknown algorithm %v", algorithm)
 	}
@@ -90,7 +91,8 @@ func New(algorithm string, keyLookup KeyLookup) (*Auth, error) {
 		if !ok {
 			return nil, errors.New("user token key id (kid) must be string")
 		}
-		return keyLookup.PublicKey(kidID)
+		// return keyLookup.PublicKey(kidID)
+		return lookup(kidID)
 	}
 
 	// Create the token parser to use. The algorithm used to sign the JWT must be
@@ -106,7 +108,7 @@ func New(algorithm string, keyLookup KeyLookup) (*Auth, error) {
 		// method:    method,
 		keyFunc: keyFunc,
 		parser:  &parser,
-		// keys:    keys,
+		keys:    keys,
 	}
 
 	return &a, nil
@@ -126,7 +128,8 @@ func (a *Auth) RemoveKey(kid string) {
 // GenerateToken generates a signed JWT token string representing the user Claims.
 func (a *Auth) GenerateToken(kid string, claims Claims) (string, error) {
 
-	method := jwt.GetSigningMethod("RS256")
+	// method := jwt.GetSigningMethod("RS256")
+	method := jwt.GetSigningMethod(a.algorithm)
 
 	token := jwt.NewWithClaims(method, claims)
 	token.Header["kid"] = kid
