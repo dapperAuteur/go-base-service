@@ -43,6 +43,9 @@ kind-status:
 	kubectl get nodes
 	kubectl get pods --watch
 
+kind-status-full:
+	kubectl describe pod -lapp=service-api
+
 # ==============================================
 run:
 	go run app/service-api/main.go
