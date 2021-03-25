@@ -1,7 +1,7 @@
 # dockerfile.sales-api
 
 # Build the Go Binary
-FROM golang:1.15.2 as build_service
+FROM golang:1.15.2 as build_service-api
 ENV CGO_ENABLED 0
 ARG VCS_REF
 
@@ -11,6 +11,7 @@ RUN mkdir -p /service
 
 # Copy the module files first and then download the dependencies.
 # If this doesn't change, we won't need to do this again in future builds.
+# Do this if there's NO vendor folder in the project root.
 # COPY go.* /service/
 # WORKDIR /service
 # RUN go mod download

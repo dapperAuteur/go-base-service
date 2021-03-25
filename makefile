@@ -3,14 +3,16 @@ SHELL := /bin/bash
 # =======================================
 # Building containers
 
-all: service-api
+all:
+	service-api
 
-service-api: docker build \
-			-f zarf/docker/dockerfile.service-api \
-			-t service-api-amd64:1.0 \
-			--build-arg VCS_REF=`git rev-parse HEAD` \
-			--build-arg BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"` \
-			.
+service-api:
+	docker build \
+		-f zarf/docker/dockerfile.service-api \
+		-t service-api-amd64:1.0 \
+		--build-arg VCS_REF=`git rev-parse HEAD` \
+		--build-arg BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"` \
+		.
 
 run:
 	go run app/service-api/main.go
