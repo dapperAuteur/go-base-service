@@ -10,7 +10,8 @@ import (
 )
 
 type check struct {
-	log *log.Logger
+	build string
+	log   *log.Logger
 }
 
 func (c check) readiness(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
