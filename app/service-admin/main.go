@@ -46,7 +46,7 @@ func tokengen() {
 	// jti (JWT ID): Unique identifier; can be used to prevent the JWT from being replayed (allows a token to be used only once)
 	claims := struct {
 		jwt.StandardClaims
-		Roles []string
+		Roles []string `json:"roles"`
 	}{
 		StandardClaims: jwt.StandardClaims{
 			Issuer:    "go-base-service project",
