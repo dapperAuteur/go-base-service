@@ -100,6 +100,34 @@ func run(log *log.Logger) error {
 	log.Printf("main: Config:\n%v\n", out)
 
 	// =========================================================================
+	// Initialize authentication support
+
+	log.Println("main: Started: Initializing authentication support")
+
+	privatePEM, err := ioutil.ReadFile(cfg.Auth.PrivateKeyFile)
+	if err != nil {
+		return errors.Wrap(err, "reading auth private key")
+	}
+
+	privateKey, err := jwt.ParseRSAPrivateKeyFromPEM(privatePEM)
+	if err != nil {
+		return errors.Wrap(err, "parsing auth private key")
+	}
+
+	lookup := func(kid string) (*rsa.PublicKey, error) {
+		switch kid {
+		case cfg.Auth.KeyID:
+			return &privateKey.PublicKey, nil
+		}
+		return nil, fmt.Errorf("no public key found for the specified kid: %s", kid)
+	}
+
+	auth, err := auth.New(cfg.Auth.Algorithm, lookup, auth.Keys{cfg.Auth.KeyID: privateKey})
+	if err != nil {
+		return errors.Wrap(err, "constructing auth")
+	}
+
+	// =========================================================================
 	// Start Debug Service
 	//
 	// /debug/pprof - Added to the default mux by importing the net/http/pprof package.
