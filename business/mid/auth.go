@@ -29,8 +29,9 @@ func Authenticate(a *auth.Auth) web.Middleware {
 			authStr := r.Header.Get("authorization")
 
 			// Parse the authorization header.
-			// Expected header is of the format `Bearer <token>`.
 			parts := strings.Split(authStr, " ")
+
+			// Expected header is of the format `Bearer <token>`.
 			if len(parts) != 2 || strings.ToLower(parts[0]) != "bearer" {
 				err := errors.New("expected authorization header format: Bearer <token>")
 				// log.Fatalln(err)
@@ -41,7 +42,7 @@ func Authenticate(a *auth.Auth) web.Middleware {
 			// Validate the token is signed by us.
 			claims, err := a.ValidateToken(parts[1])
 			if err != nil {
-				return validate.NewRequestError(err, http.StatusUnauthorized)
+				return web.NewRequestError(err, http.StatusUnauthorized)
 			}
 
 			// Add claims to the context so they can be retrieved later.
@@ -60,12 +61,26 @@ func Authenticate(a *auth.Auth) web.Middleware {
 func Authorize(roles ...string) web.Middleware {
 
 	// This is the actual middleware function to be executed.
-	m := func(after web.Handler) web.Handler {
+	m := func(handler web.Handler) web.Handler {
 
 		// Create the handler that will be attached in the middleware chain.
 		h := func(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
 
-			return nil
+			// If the context is missing this value return failure.
+			claims, ok := ctx.Value(auth.Key).(auth.Claims)
+			if !ok {
+				return errors.New("claims missing from context")
+			}
+
+			if !claims.Authorize(roles...) {
+				// return validate.NewRequestError(
+				// 	fmt.Errorf("you are not authorized for that action: claims: %v exp: %v", claims.Roles, roles),
+				// 	http.StatusForbidden,
+				// )
+				return ErrForbidden
+			}
+
+			return handler(ctx, w, r)
 		}
 		return h
 	}
