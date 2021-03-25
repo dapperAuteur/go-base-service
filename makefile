@@ -20,6 +20,8 @@ service-api:
 kind-up:
 	kind create cluster --image kindest/node:v1.20.2 --name awe-ful-starter-cluster --config zarf/k8s/dev/kind-config.yaml
 
+kind-down:
+	kind delete cluster --name awe-ful-starter-cluster
 run:
 	go run app/service-api/main.go
 
