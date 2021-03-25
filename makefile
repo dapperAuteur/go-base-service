@@ -26,6 +26,9 @@ kind-down:
 kind-load:
 	kind load docker-image service-api-amd64:1.0 --name awe-ful-starter-cluster
 
+kind-services:
+	kustomize build zarf/k8s/dev | kubectl apply -f -
+
 run:
 	go run app/service-api/main.go
 
