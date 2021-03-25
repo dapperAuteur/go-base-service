@@ -29,7 +29,7 @@ kind-down:
 kind-load:
 	kind load docker-image service-api-amd64:1.0 --name awe-ful-starter-cluster
 
-kind-services:
+kind-service:
 	kustomize build zarf/k8s/dev | kubectl apply -f -
 
 # kind-update: service
@@ -47,7 +47,8 @@ kind-logs:
 	kubectl logs -lapp=service-api --all-containers=true -f
 
 kind-service-api: service-api
-	kind load docker-image service-api-amd64:1.0 --name awe-ful-starter-cluster kubectl delete pods -lapp=service-api
+	kind load docker-image service-api-amd64:1.0 --name awe-ful-starter-cluster
+	kubectl delete pods -lapp=service-api
 
 # ==============================================
 run:
