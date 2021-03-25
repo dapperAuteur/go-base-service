@@ -3,6 +3,7 @@ package mid
 import (
 	"context"
 	"errors"
+	"log"
 	"net/http"
 	"strings"
 
@@ -58,7 +59,7 @@ func Authenticate(a *auth.Auth) web.Middleware {
 
 // Authorize validates that an authenticated user has at least one role from a
 // specified list. This method constructs the actual function that is used.
-func Authorize(roles ...string) web.Middleware {
+func Authorize(log *log.Logger, roles ...string) web.Middleware {
 
 	// This is the actual middleware function to be executed.
 	m := func(handler web.Handler) web.Handler {
@@ -73,6 +74,7 @@ func Authorize(roles ...string) web.Middleware {
 			}
 
 			if !claims.Authorize(roles...) {
+				log.Println("mid: authorize: claims: %v exp: %v", claims.Roles, roles)
 				// return validate.NewRequestError(
 				// 	fmt.Errorf("you are not authorized for that action: claims: %v exp: %v", claims.Roles, roles),
 				// 	http.StatusForbidden,
