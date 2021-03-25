@@ -36,15 +36,15 @@ kind-services:
 # 	kind load docker-image service-api-amd64:1.0 --name awe-ful-starter-cluster
 # 	kubectl delete pods -lapp=service-api
 
-# kind-logs:
-# 	kubectl logs -lapp=service-api --all-containers=true -f
-
 kind-status:
 	kubectl get nodes
 	kubectl get pods --watch
 
 kind-status-full:
 	kubectl describe pod -lapp=service-api
+
+kind-logs:
+	kubectl logs -lapp=service-api --all-containers=true -f
 
 # ==============================================
 run:
