@@ -22,6 +22,10 @@ kind-up:
 
 kind-down:
 	kind delete cluster --name awe-ful-starter-cluster
+
+kind-load:
+	kind load docker-image service-api-amd64:1.0 --name awe-ful-starter-cluster
+
 run:
 	go run app/service-api/main.go
 
