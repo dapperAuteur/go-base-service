@@ -20,6 +20,9 @@ service-api:
 kind-up:
 	kind create cluster --image kindest/node:v1.20.2 --name awe-ful-starter-cluster --config zarf/k8s/dev/kind-config.yaml
 
+# kind-up-m1:
+# 	kind create cluster --image rossgeorgiev/kind-node-arm64 --name awe-ful-starter-cluster --config zarf/k8s/dev/kind-config.yaml
+
 kind-down:
 	kind delete cluster --name awe-ful-starter-cluster
 
@@ -29,6 +32,18 @@ kind-load:
 kind-services:
 	kustomize build zarf/k8s/dev | kubectl apply -f -
 
+# kind-update: service
+# 	kind load docker-image service-api-amd64:1.0 --name awe-ful-starter-cluster
+# 	kubectl delete pods -lapp=service-api
+
+# kind-logs:
+# 	kubectl logs -lapp=service-api --all-containers=true -f
+
+kind-status:
+	kubectl get nodes
+	kubectl get pods --watch
+
+# ==============================================
 run:
 	go run app/service-api/main.go
 
