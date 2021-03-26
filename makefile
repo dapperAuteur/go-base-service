@@ -28,8 +28,9 @@ kind-down:
 
 kind-load:
 	kind load docker-image service-api-amd64:1.0 --name awe-ful-starter-cluster
+	# kind load docker-image metrics-amd64:1.0 --name awe-ful-starter-cluster
 
-kind-service:
+kind-services:
 	kustomize build zarf/k8s/dev | kubectl apply -f -
 
 # kind-update: service
