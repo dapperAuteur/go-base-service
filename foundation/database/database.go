@@ -77,3 +77,29 @@ func StatusCheck(ctx context.Context, db *sqlx.DB) error {
 	var tmp bool
 	return db.QueryRowContext(ctx, q).Scan(&tmp)
 }
+
+// Log provides a pretty print version of the query and parameters.
+func Log(query string, args ...interface{}) string {
+	query, params, err := sqlx.Named(query, args)
+	if err != nil {
+		return err.Error()
+	}
+
+	for _, param := range params {
+		var value string
+		switch v := param.(type) {
+		case string:
+			value = fmt.Sprintf("%q", v)
+		case []byte:
+			value = fmt.Sprintf("%q", string(v))
+		default:
+			value = fmt.Sprintf("%v", v)
+		}
+		query = strings.Replace(query, "?", value, 1)
+	}
+
+	query = strings.Replace(query, "\t", "", -1)
+	query = strings.Replace(query, "\n", " ", -1)
+
+	return fmt.Sprintf("[%s]\n", strings.Trim(query, " "))
+}
