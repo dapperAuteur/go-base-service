@@ -22,8 +22,38 @@ import (
 func main() {
 	// keygen()
 
-	tokengen()
+	// tokengen()
+	migrate()
 
+}
+
+func migrate()  {
+	
+	dbConfig := database.Config{
+		User:       "postgres",
+		Password:   "postgres"
+		Host:       "0.0.0.0",
+		Name:       "postgres"
+		DisableTLS: true,
+	}
+
+	db, err := database.Open(dbConfig)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	defer db.Close()
+
+	if err := schema.Migrate(db); err != nil {
+		log.Fatalln(err)
+	}
+
+	fmt.Println("migrations complete")
+	
+	if err := schema.Seed(db); err != nil {
+		log.Fatalln(err)
+	}
+
+	fmt.Println("seed data complete")
 }
 
 func tokengen() {
