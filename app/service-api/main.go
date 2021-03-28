@@ -17,6 +17,7 @@ import (
 	"github.com/ardanlabs/conf"
 	"github.com/dapperauteur/go-base-service/app/service-api/handlers"
 	"github.com/dapperauteur/go-base-service/business/auth"
+	"github.com/dapperauteur/go-base-service/foundation/database"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/pkg/errors"
 )
@@ -60,9 +61,9 @@ func run(log *log.Logger) error {
 		Auth struct {
 			// KeyID string `conf:"default:zarf/keys/"`
 			KeyID          string `conf:"default:54bb2165-71e1-41a6-af3e-7da4a0e1e2c1"`
-			PrivateKeyFile string `conf:"default/service/private.pem"` // when using docker/kube
+			// PrivateKeyFile string `conf:"default/service/private.pem"` // when using docker/kube
 			// PrivateKeyFile string `conf:"default:zarf/keys/"`
-			// PrivateKeyFile string `conf:"default:/Users/awe/Coding/repos/my-repos/go-base-service/private.pem"` // when private.pem is on local machine
+			PrivateKeyFile string `conf:"default:/Users/awe/Coding/repos/my-repos/go-base-service/private.pem"` // when private.pem is on local machine
 			Algorithm string `conf:"default:RS256"`
 		}
 		DB struct {
