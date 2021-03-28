@@ -2,26 +2,26 @@
 package schema
 
 import (
-	"bufio"
-	"context"
-	"strconv"
-	"strings"
+	// "bufio"
+	// "context"
+	// "strconv"
+	// "strings"
 
-	"github.com/ardanlabs/service/foundation/database"
+	// "github.com/ardanlabs/service/foundation/database"
 	"github.com/dimiro1/darwin"
 	"github.com/jmoiron/sqlx"
-	"github.com/pkg/errors"
+	// "github.com/pkg/errors"
 )
 
 var (
-	//go:embed sql/schema.sql
-	schemaDoc string
+	// //go:embed sql/schema.sql
+	// schemaDoc string
 
-	//go:embed sql/seed.sql
-	seedDoc string
+	// //go:embed sql/seed.sql
+	// seedDoc string
 
-	//go:embed sql/delete.sql
-	deleteDoc string
+	// //go:embed sql/delete.sql
+	// deleteDoc string
 )
 
 // Migrate attempts to bring the schema for db up to date with the migrations
