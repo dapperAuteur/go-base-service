@@ -7,10 +7,10 @@ import (
 	_ "github.com/lib/pq" // Calls init function.
 
 	"context"
-	"errors"
+	// "errors"
 	"fmt"
 	"net/url"
-	"reflect"
+	// "reflect"
 	"strings"
 
 	"github.com/jmoiron/sqlx"

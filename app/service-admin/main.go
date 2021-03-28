@@ -12,6 +12,9 @@ import (
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
+
+	"github.com/dapperauteur/go-base-service/foundation/database"
+	"github.com/dapperauteur/go-base-service/business/data/schema"
 )
 
 /*
@@ -22,8 +25,8 @@ import (
 func main() {
 	// keygen()
 
-	// tokengen()
-	migrate()
+	tokengen()
+	// migrate()
 
 }
 
@@ -31,9 +34,9 @@ func migrate()  {
 	
 	dbConfig := database.Config{
 		User:       "postgres",
-		Password:   "postgres"
+		Password:   "postgres",
 		Host:       "0.0.0.0",
-		Name:       "postgres"
+		Name:       "postgres",
 		DisableTLS: true,
 	}
 

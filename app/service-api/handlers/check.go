@@ -2,11 +2,13 @@ package handlers
 
 import (
 	"context"
-	"log"
+	// "log"
 	"net/http"
 	"os"
 
 	"github.com/dapperauteur/go-base-service/foundation/web"
+	"github.com/dapperauteur/go-base-service/foundation/database"
+	"github.com/jmoiron/sqlx"
 )
 
 type checkGroup struct {
