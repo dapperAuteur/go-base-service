@@ -16,6 +16,9 @@ services:
     networks:
       - shared-network
     image: postgres:13-alpine
+    environment:
+          - SERVICE_DB_DISABLE_TLS=1
+          - POSTGRES_PASSWORD=postgres
     ports:
       - 5432:5432
 
