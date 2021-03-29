@@ -59,11 +59,11 @@ func run(log *log.Logger) error {
 			ShutdownTimeout time.Duration `conf:"default:5s"`
 		}
 		Auth struct {
-			// KeyID string `conf:"default:zarf/keys/"`
-			KeyID          string `conf:"default:54bb2165-71e1-41a6-af3e-7da4a0e1e2c1"`
-			// PrivateKeyFile string `conf:"default/service/private.pem"` // when using docker/kube
+			KeyID string `conf:"default:zarf/keys/"`
+			// KeyID          string `conf:"default:54bb2165-71e1-41a6-af3e-7da4a0e1e2c1"`
+			PrivateKeyFile string `conf:"default/service/private.pem"` // when using kube & docker
 			// PrivateKeyFile string `conf:"default:zarf/keys/"`
-			PrivateKeyFile string `conf:"default:/Users/awe/Coding/repos/my-repos/go-base-service/private.pem"` // when private.pem is on local machine
+			// PrivateKeyFile string `conf:"default:/Users/awe/Coding/repos/my-repos/go-base-service/private.pem"` // when private.pem is on local machine
 			Algorithm string `conf:"default:RS256"`
 		}
 		DB struct {

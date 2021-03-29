@@ -25,8 +25,8 @@ import (
 func main() {
 	// keygen()
 
-	tokengen()
-	// migrate()
+	// tokengen()
+	migrate()
 
 }
 
