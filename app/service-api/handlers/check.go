@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	// "log"
+	"fmt"
 	"net/http"
 	"os"
 
@@ -29,6 +30,8 @@ func (cg checkGroup) readiness(ctx context.Context, w http.ResponseWriter, r *ht
 	// force shutdown
 	// return web.NewShutdownError("forcing shutdown")
 	// }
+
+	fmt.Println("*******\n check readiness *******\n")
 
 	status := "ok"
 	statusCode := http.StatusOK
