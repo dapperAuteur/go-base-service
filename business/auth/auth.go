@@ -27,8 +27,8 @@ type Claims struct {
 	Roles []string `json:"roles"`
 }
 
-// HasRole returns true if the claims has at least one of the provided roles.
-func (c Claims) HasRole(roles ...string) bool {
+// Authorize returns true if the claims has at least one of the provided roles.
+func (c Claims) Authorize(roles ...string) bool {
 	for _, has := range c.Roles {
 		for _, want := range roles {
 			if has == want {
@@ -55,7 +55,7 @@ A key lookup function is required for creating an Authenticator.
  * KID to public key resolution is usually accomplished via a public JWKS endpoint.
  See https://auth0.com/docs/jwks for more details.
 */
-type PublicKeyLookup func(kid string) (*rsa.PublicKey, err)
+type PublicKeyLookup func(kid string) (*rsa.PublicKey, error)
 
 // Auth is used to authenticate clients. It can generate a token for a
 // set of user claims and recreate the claims by parsing the token.
@@ -137,8 +137,8 @@ func (a *Auth) GenerateToken(kid string, claims Claims) (string, error) {
 	return str, nil
 }
 
-// ValidateToken recreates the Claims that were used to generate a token. It
-// verifies that the token was signed using our key.
+// ValidateToken recreates the Claims that were used to generate a token.
+// It verifies that the token was signed using our key.
 func (a *Auth) ValidateToken(tokenStr string) (Claims, error) {
 	var claims Claims
 	token, err := a.parser.ParseWithClaims(tokenStr, &claims, a.keyFunc)
