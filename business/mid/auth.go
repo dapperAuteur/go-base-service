@@ -74,7 +74,7 @@ func Authorize(log *log.Logger, roles ...string) web.Middleware {
 			}
 
 			if !claims.Authorize(roles...) {
-				log.Println("mid: authorize: claims: %v exp: %v", claims.Roles, roles)
+				log.Printf("mid: authorize: claims: %v exp: %v", claims.Roles, roles)
 				// return validate.NewRequestError(
 				// 	fmt.Errorf("you are not authorized for that action: claims: %v exp: %v", claims.Roles, roles),
 				// 	http.StatusForbidden,
