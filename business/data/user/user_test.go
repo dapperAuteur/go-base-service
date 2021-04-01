@@ -45,5 +45,11 @@ func TestUser(t *testing.T) {
 			},
 			Roles: []string{auth.RoleUser},
 		}
+
+		saved, err := u.QueryByID(ctx, traceID, claims, usr.ID)
+		if err != nil {
+			t.Fatalf("\t%s\tTest %d:\tShould be able to retrieve user by ID: %s.", tests.Failed, testID, err)
+		}
+		t.Logf("\t%s\tTest %d:\tShould be able to retrieve user by ID.", tests.Success, testID)
 	}
 }
