@@ -35,7 +35,6 @@ func Authenticate(a *auth.Auth) web.Middleware {
 			// Expected header is of the format `Bearer <token>`.
 			if len(parts) != 2 || strings.ToLower(parts[0]) != "bearer" {
 				err := errors.New("expected authorization header format: Bearer <token>")
-				// log.Fatalln(err)
 				return web.NewRequestError(err, http.StatusUnauthorized)
 
 			}
