@@ -53,3 +53,16 @@ func startContainer(t *testing.T, image string, port string, args ...string) *Co
 
 	return &c
 }
+
+// StopContainer stops and removes the specified container.
+func StopContainer(t *testing.T, id string) {
+	if err := exec.Command("docker", "stop", id).Run(); err != nil {
+		t.Fatalf("could not stop container: %v", err)
+	}
+	t.Log("Stopped:", id)
+
+	if err := exec.Command("docker", "rm", id, "-v").Run(); err != nil {
+		t.Fatalf("could not remove container: %v", err)
+	}
+	t.Log("Removed:", id)
+}
