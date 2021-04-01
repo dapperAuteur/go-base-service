@@ -23,6 +23,10 @@
 # Building containers
 
 
+==========
+## Testing
+The testing db uses `dbImage = "postgres:13-alpine"`.
+It will need to be updated if the app db is changed.
 
 ========
 ## Steps to get Docker, Kubernetes, and etc up and running
