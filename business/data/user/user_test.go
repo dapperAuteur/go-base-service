@@ -9,6 +9,7 @@ import (
 	"github.com/dapperauteur/go-base-service/business/tests"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/google/go-cmp/cmp"
+	"github.com/pkg/errors"
 )
 
 func TestUser(t *testing.T) {
@@ -101,6 +102,17 @@ func TestUser(t *testing.T) {
 			} else {
 				t.Logf("\t%s\tTest %d:\tShould be able to see updates to Email.", tests.Success, testID)
 			}
+
+			if err := u.Delete(ctx, traceID, usr.ID); err != nil {
+				t.Fatalf("\t%s\tTest %d:\tShould be able to delete user : %s.", tests.Failed, testID, err)
+			}
+			t.Logf("\t%s\tTest %d:\tShould be able to delete user.", tests.Success, testID)
+
+			_, err = u.QueryByID(ctx, traceID, claims, usr.ID)
+			if errors.Cause(err) != user.ErrNotFound {
+				t.Fatalf("\t%s\tTest %d:\tShould NOT be able to retrieve user : %s.", tests.Failed, testID, err)
+			}
+			t.Logf("\t%s\tTest %d:\tShould NOT be able to retrieve user.", tests.Success, testID)
 		}
 	}
 }
