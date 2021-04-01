@@ -2,6 +2,7 @@
 package tests
 
 import (
+	"context"
 	"log"
 	"os"
 	"testing"
@@ -9,6 +10,8 @@ import (
 
 	"github.com/dapperauteur/go-base-service/business/data/schema"
 	"github.com/dapperauteur/go-base-service/foundation/database"
+	"github.com/dapperauteur/go-base-service/foundation/web"
+	"github.com/google/uuid"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -85,4 +88,29 @@ func NewUnit(t *testing.T) (*log.Logger, *sqlx.DB, func()) {
 	log := log.New(os.Stdout, "TEST : ", log.LstdFlags|log.Lmicroseconds|log.Lshortfile)
 
 	return log, db, teardown
+}
+
+// Context returns an app level context for testing.
+func Context() context.Context {
+
+	values := web.Values{
+		TraceID: uuid.New().String(),
+		Now:     time.Now(),
+	}
+
+	return context.WithValue(context.Background(), web.KeyValues, &values)
+}
+
+// StringPointer is a helper to get a *string from a string. It is in the tests
+// package because we normally don't want to deal with pointers to basic types
+// but it's useful in some tests.
+func StringPointer(s string) *string {
+	return &s
+}
+
+// IntPointer is a helper to get a *int from a int. It is in the tests package
+// because we normally don't want to deal with pointers to basic types but it's
+// useful in some tests.
+func IntPointer(i int) *int {
+	return &i
 }
