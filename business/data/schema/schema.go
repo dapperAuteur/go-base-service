@@ -2,15 +2,8 @@
 package schema
 
 import (
-	"bufio"
-	"context"
-	"strconv"
-	"strings"
-
-	"github.com/ardanlabs/service/foundation/database"
 	"github.com/dimiro1/darwin"
 	"github.com/jmoiron/sqlx"
-	"github.com/pkg/errors"
 )
 
 var (
@@ -41,7 +34,7 @@ func Migrate(db *sqlx.DB) error {
 // You may also consider a combied approach using a tool like packr or go-bindata.
 var migrations = []darwin.Migration{
 	{
-		Version: 1.1,
+		Version:     1.1,
 		Description: "Create table users",
 		Script: `
 		CREATE TABLE users (
@@ -57,7 +50,7 @@ var migrations = []darwin.Migration{
 		);`,
 	},
 	{
-		Version: 1.2,
+		Version:     1.2,
 		Description: "Create table products",
 		Script: `
 		CREATE TABLE products (
@@ -72,7 +65,7 @@ var migrations = []darwin.Migration{
 		);`,
 	},
 	{
-		Version: 1.3,
+		Version:     1.3,
 		Description: "Create table sales",
 		Script: `
 		CREATE TABLE sales (
@@ -87,7 +80,7 @@ var migrations = []darwin.Migration{
 		);`,
 	},
 	{
-		Version: 2.1,
+		Version:     2.1,
 		Description: "Alter table products with user column",
 		Script: `
 		ALTER TABLE products

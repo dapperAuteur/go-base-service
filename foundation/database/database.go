@@ -4,13 +4,14 @@ package database
 import (
 	"time"
 
-	_ "github.com/lib/pq" // Calls init function.
+	_ "github.com/lib/pq" // Calls init function. DB driver in use.
 
 	"context"
-	"errors"
+	// "errors"
 	"fmt"
 	"net/url"
-	"reflect"
+
+	// "reflect"
 	"strings"
 
 	"github.com/jmoiron/sqlx"

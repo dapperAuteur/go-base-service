@@ -17,6 +17,7 @@ import (
 	"github.com/ardanlabs/conf"
 	"github.com/dapperauteur/go-base-service/app/service-api/handlers"
 	"github.com/dapperauteur/go-base-service/business/auth"
+	"github.com/dapperauteur/go-base-service/foundation/database"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/pkg/errors"
 )

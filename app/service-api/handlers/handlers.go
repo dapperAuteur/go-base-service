@@ -10,6 +10,7 @@ import (
 	"github.com/dapperauteur/go-base-service/business/auth"
 	"github.com/dapperauteur/go-base-service/business/mid"
 	"github.com/dapperauteur/go-base-service/foundation/web"
+	"github.com/jmoiron/sqlx"
 )
 
 // API constructs an http.Handler with all application routes defined.
@@ -19,7 +20,7 @@ func API(build string, shutdown chan os.Signal, log *log.Logger, a *auth.Auth, d
 
 	cg := checkGroup{
 		build: build,
-		db:   db,
+		db:    db,
 	}
 
 	app.Handle(http.MethodGet, "/readiness", cg.readiness, mid.Authenticate(a), mid.Authorize(log, auth.RoleAdmin))

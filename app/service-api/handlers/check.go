@@ -2,16 +2,18 @@ package handlers
 
 import (
 	"context"
-	"log"
+	// "log"
 	"net/http"
 	"os"
 
+	"github.com/dapperauteur/go-base-service/foundation/database"
 	"github.com/dapperauteur/go-base-service/foundation/web"
+	"github.com/jmoiron/sqlx"
 )
 
 type checkGroup struct {
 	build string
-	db *sqlx.DB
+	db    *sqlx.DB
 }
 
 func (cg checkGroup) readiness(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
