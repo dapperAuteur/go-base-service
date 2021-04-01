@@ -6,16 +6,16 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-var (
-	//go:embed sql/schema.sql
-	schemaDoc string
+// var (
+// 	//go:embed sql/schema.sql
+// 	schemaDoc string
 
-	//go:embed sql/seed.sql
-	seedDoc string
+// 	//go:embed sql/seed.sql
+// 	seedDoc string
 
-	//go:embed sql/delete.sql
-	deleteDoc string
-)
+// 	//go:embed sql/delete.sql
+// 	deleteDoc string
+// )
 
 // Migrate attempts to bring the schema for db up to date with the migrations
 // defined in this package.
