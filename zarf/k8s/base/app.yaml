@@ -21,10 +21,6 @@ spec:
           containerPort: 9411
       - name: app
         image: service-api-amd64:1.0
-      # terminationGracePeriodSeconds: 60
-      # containers:
-      # - name: app
-      #   image: service-api-amd64:1.0
         env:
         - name: SERVICE_DB_HOST
           valueFrom:
@@ -89,9 +85,3 @@ spec:
   - name: app-debug
     port: 4000
     targetPort: app-debug
-  # - name: metrics
-  #   port: 3001
-  #   targetPort: metrics
-  # - name: metrics-debug
-  #   port: 4001
-  #   targetPort: metrics-debug
