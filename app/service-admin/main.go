@@ -11,6 +11,8 @@ import (
 	"os"
 	"time"
 
+	"github.com/dapperauteur/go-base-service/business/data/schema"
+	"github.com/dapperauteur/go-base-service/foundation/database"
 	"github.com/dgrijalva/jwt-go"
 )
 
@@ -27,13 +29,13 @@ func main() {
 
 }
 
-func migrate()  {
-	
+func migrate() {
+
 	dbConfig := database.Config{
 		User:       "postgres",
-		Password:   "postgres"
+		Password:   "postgres",
 		Host:       "0.0.0.0",
-		Name:       "postgres"
+		Name:       "postgres",
 		DisableTLS: true,
 	}
 
@@ -48,7 +50,7 @@ func migrate()  {
 	}
 
 	fmt.Println("migrations complete")
-	
+
 	if err := schema.Seed(db); err != nil {
 		log.Fatalln(err)
 	}
