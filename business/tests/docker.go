@@ -75,3 +75,35 @@ func DumpContainerLogs(t *testing.T, id string) {
 	}
 	t.Logf("Logs for %s\n%s:", id, out)
 }
+
+func extractIPPort(t *testing.T, doc []map[string]interface{}, port string) (string, string) {
+
+	nw, exists := doc[0]["NetworkSettings"]
+	if !exists {
+		t.Fatal("could not get network settings")
+	}
+
+	ports, exists := nw.(map[string]interface{})["Ports"]
+	if !exists {
+		t.Fatal("could not get network ports settings")
+	}
+
+	tcp, exists := ports.(map[string]interface{})[port+"/tcp"]
+	if !exists {
+		t.Fatal("could not get network ports/tcp settings")
+	}
+
+	list, exists := tcp.([]interface{})
+	if !exists {
+		t.Fatal("could not get network ports/tcp list settings")
+	}
+	if len(list) != 1 {
+		t.Fatal("could not get network ports/tcp list settings")
+	}
+	data, exists := list[0].(map[string]interface{})
+	if !exists {
+		t.Fatal("could not get network ports/tcp list data")
+	}
+
+	return data["HostIp"].(string), data["HostPort"].(string)
+}
