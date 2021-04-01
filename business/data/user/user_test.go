@@ -7,6 +7,7 @@ import (
 	"github.com/dapperauteur/go-base-service/business/auth"
 	"github.com/dapperauteur/go-base-service/business/data/user"
 	"github.com/dapperauteur/go-base-service/business/tests"
+	"github.com/dgrijalva/jwt-go"
 )
 
 func TestUser(t *testing.T) {
@@ -34,5 +35,15 @@ func TestUser(t *testing.T) {
 			t.Fatalf("\t%s\tTest %d:\tShould be able to create user : %s.", tests.Failed, testID, err)
 		}
 		t.Logf("\t%s\tTest %d:\tShould be able to create user.", tests.Success, testID)
+
+		claims := auth.Claims{
+			StandardClaims: jwt.StandardClaims{
+				Issuer:    "service project",
+				Subject:   usr.ID,
+				ExpiresAt: now.Add(time.Hour).Unix(),
+				IssuedAt:  now.Unix(),
+			},
+			Roles: []string{auth.RoleUser},
+		}
 	}
 }
