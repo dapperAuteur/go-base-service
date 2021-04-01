@@ -66,3 +66,12 @@ func StopContainer(t *testing.T, id string) {
 	}
 	t.Log("Removed:", id)
 }
+
+// DumpContainerLogs outputs logs from the running docker container.
+func DumpContainerLogs(t *testing.T, id string) {
+	out, err := exec.Command("docker", "logs", id).CombinedOutput()
+	if err != nil {
+		t.Fatalf("could not log container: %v", err)
+	}
+	t.Logf("Logs for %s\n%s:", id, out)
+}
