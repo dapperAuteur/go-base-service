@@ -29,7 +29,7 @@
 start docker
 run the following commands in this order after the previous command has completed
 
-* kind-up
+* make kind-up
 * make kind-load
 * make kind-services
 * make kind-status (should show DB up and running)
