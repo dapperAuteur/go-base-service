@@ -3,8 +3,7 @@ SHELL := /bin/bash
 # =======================================
 # Building containers
 
-all:
-	service-api
+all: service-api
 
 service-api:
 	docker build \
@@ -45,9 +44,9 @@ kind-status-full:
 	kubectl describe pod -lapp=service-api
 
 kind-logs:
-	kubectl logs -lapp=service-api --all-containers=true -f
+	kubectl logs -lapp=service-api --all-containers=true -f --tail=100
 
-kind-service-api: service-api
+kind-update: service-api
 	kind load docker-image service-api-amd64:1.0 --name awe-ful-starter-cluster
 	kubectl delete pods -lapp=service-api
 
