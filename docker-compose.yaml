@@ -1,0 +1,32 @@
+# https://docs.docker.com/compose/compose-file
+# docker-compose up
+# docker-compose stop
+# docker-compose down
+version: '3'
+
+networks:
+  shared-network:
+    driver: bridge
+
+services:
+
+  # This starts a local PostgreSQL DB.
+  db:
+    container_name: service_db
+    networks:
+      - shared-network
+    image: postgres:13-alpine
+    environment:
+          - SERVICE_DB_DISABLE_TLS=1
+          - POSTGRES_PASSWORD=postgres
+    ports:
+      - 5432:5432
+
+  # This sidecar allows for the viewing of traces.
+  zipkin:
+    container_name: zipkin
+    networks:
+      - shared-network
+    image: openzipkin/zipkin:2.21
+    ports:
+      - 9411:9411
