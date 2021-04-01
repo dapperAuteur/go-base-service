@@ -55,7 +55,7 @@ func startContainer(t *testing.T, image string, port string, args ...string) *Co
 }
 
 // StopContainer stops and removes the specified container.
-func StopContainer(t *testing.T, id string) {
+func stopContainer(t *testing.T, id string) {
 	if err := exec.Command("docker", "stop", id).Run(); err != nil {
 		t.Fatalf("could not stop container: %v", err)
 	}
@@ -68,7 +68,7 @@ func StopContainer(t *testing.T, id string) {
 }
 
 // DumpContainerLogs outputs logs from the running docker container.
-func DumpContainerLogs(t *testing.T, id string) {
+func dumpContainerLogs(t *testing.T, id string) {
 	out, err := exec.Command("docker", "logs", id).CombinedOutput()
 	if err != nil {
 		t.Fatalf("could not log container: %v", err)
