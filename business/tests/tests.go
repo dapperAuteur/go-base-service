@@ -2,7 +2,6 @@
 package tests
 
 import (
-	"context"
 	"log"
 	"os"
 	"testing"
@@ -50,15 +49,6 @@ func NewUnit(t *testing.T) (*log.Logger, *sqlx.DB, func()) {
 	}
 
 	t.Log("Waiting for database to be ready ...")
-
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
-	if err := schema.Migrate(ctx, db); err != nil {
-		docker.DumpContainerLogs(t, c.ID)
-		docker.StopContainer(t, c.ID)
-		t.Fatalf("Migrating error: %s", err)
-	}
 
 	// Wait for the db to be ready.
 	// Wait 100ms longer between each attempt.
