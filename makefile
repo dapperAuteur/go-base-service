@@ -54,7 +54,7 @@ kind-update: service-api
 run:
 	go run app/service-api/main.go
 
-runadmin:
+run-admin:
 	go run app/service-admin/main.go
 
 test:
