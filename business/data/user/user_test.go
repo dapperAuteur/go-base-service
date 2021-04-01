@@ -28,5 +28,11 @@ func TestUser(t *testing.T) {
 			Password:        "spread love",
 			PasswordConfirm: "spread love",
 		}
+
+		usr, err := u.Create(ctx, traceID, nu, now)
+		if err != nil {
+			t.Fatalf("\t%s\tTest %d:\tShould be able to create user : %s.", tests.Failed, testID, err)
+		}
+		t.Logf("\t%s\tTest %d:\tShould be able to create user.", tests.Success, testID)
 	}
 }
