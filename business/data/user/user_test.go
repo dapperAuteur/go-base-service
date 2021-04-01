@@ -8,10 +8,11 @@ import (
 	"github.com/dapperauteur/go-base-service/business/data/user"
 	"github.com/dapperauteur/go-base-service/business/tests"
 	"github.com/dgrijalva/jwt-go"
+	"github.com/google/go-cmp"
 )
 
 func TestUser(t *testing.T) {
-	log, db, teardown := tests.NewUnit(t, dbc)
+	log, db, teardown := tests.NewUnit(t)
 	t.Cleanup(teardown)
 
 	u := user.New(log, db)
@@ -51,5 +52,10 @@ func TestUser(t *testing.T) {
 			t.Fatalf("\t%s\tTest %d:\tShould be able to retrieve user by ID: %s.", tests.Failed, testID, err)
 		}
 		t.Logf("\t%s\tTest %d:\tShould be able to retrieve user by ID.", tests.Success, testID)
+
+		if diff := cmp.Diff(usr, saved); diff != "" {
+			t.Fatalf("\t%s\tTest %d:\tShould get back the same user. Diff:\n%s", tests.Failed, testID, diff)
+		}
+		t.Logf("\t%s\tTest %d:\tShould get back the same user.", tests.Success, testID)
 	}
 }
