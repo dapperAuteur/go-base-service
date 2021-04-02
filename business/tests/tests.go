@@ -13,6 +13,7 @@ import (
 
 	"github.com/dapperauteur/go-base-service/business/auth"
 	"github.com/dapperauteur/go-base-service/business/data/schema"
+	"github.com/dapperauteur/go-base-service/business/data/user"
 	"github.com/dapperauteur/go-base-service/foundation/database"
 	"github.com/dapperauteur/go-base-service/foundation/web"
 	"github.com/google/uuid"
@@ -171,4 +172,27 @@ func NewIntegration(t *testing.T) *Test {
 	}
 
 	return &test
+}
+
+// Teardown releases any resources used for the test.
+func (test *Test) Teardown() {
+	test.cleanup()
+}
+
+// Token generates an authenticated token for a user.
+func (test *Test) Token(kid, email, pass string) string {
+	test.t.Log("Generating token for test ...")
+
+	u := user.New(test.Log, test.DB)
+	claims, err := u.Authenticate(context.Background(), test.TraceID, time.Now(), email, pass)
+	if err != nil {
+		test.t.Fatal(err)
+	}
+
+	token, err := test.Auth.GenerateToken(kid, claims)
+	if err != nil {
+		test.t.Fatal(err)
+	}
+
+	return token
 }
