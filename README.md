@@ -49,6 +49,8 @@ at the top of the page
 #### Imports
 could not import go.opentelemetry.io/otel/api/trace (no required module provides package
 
+preventing app from rebuilding
+
 #### Testing
 The testing db uses `dbImage = "postgres:13-alpine"`.
 It will need to be updated if the app db is changed.
