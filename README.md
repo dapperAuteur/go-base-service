@@ -37,6 +37,10 @@ panic: reflect: call of github.com/jmoiron/sqlx/reflectx.(*Mapper).TraversalsByN
 goroutine 19 [running]:
 ```
 
+run these commands after fixing test issue to see test coverage:
+`go test -cover`
+`go tool cover -html cover.out`
+
 ========
 ## Steps to get Docker, Kubernetes, and etc up and running
 start docker
