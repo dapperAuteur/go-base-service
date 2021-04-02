@@ -1,0 +1,5 @@
+# customized support to merge everything together (docker, k8s, kind, etc)
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - app.yaml
