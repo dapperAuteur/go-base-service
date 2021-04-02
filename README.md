@@ -28,6 +28,15 @@
 The testing db uses `dbImage = "postgres:13-alpine"`.
 It will need to be updated if the app db is changed.
 
+Tests aren't working. Getting a reflect error:
+```
+--- FAIL: TestUser (25.00s)
+panic: reflect: call of github.com/jmoiron/sqlx/reflectx.(*Mapper).TraversalsByNameFunc on string Value [recovered]
+	panic: reflect: call of github.com/jmoiron/sqlx/reflectx.(*Mapper).TraversalsByNameFunc on string Value
+
+goroutine 19 [running]:
+```
+
 ========
 ## Steps to get Docker, Kubernetes, and etc up and running
 start docker
