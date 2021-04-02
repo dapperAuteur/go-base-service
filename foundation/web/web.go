@@ -10,6 +10,8 @@ import (
 
 	"github.com/dimfeld/httptreemux/v5"
 	"github.com/google/uuid"
+	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
+	_ "go.opentelemetry.io/otel/api/trace"
 )
 
 // ctxKey represents the type of value for the context key.
@@ -41,18 +43,20 @@ type App struct {
 
 // NewApp creates an App value that handle a set of routes for the application.
 func NewApp(shutdown chan os.Signal, mw ...Middleware) *App {
-	app := App{
-		mux:      httptreemux.NewContextMux(),
-		shutdown: shutdown,
-		mw:       mw,
-	}
 
 	// Create an OpenTelemetry HTTP Handler which wraps the router.
 	// This will start the initial span and annotate it with information about the request/response.
 	//
 	// This is configured to use the W3C TraceContext standard to set the remote parent if a client request includes the appropriate headers.
 	// https://w3c.github.io/trace-context/
-	app.otmux = otelhttp.NewHandler(app.mux.TreeMux, "request")
+
+	tmmux := httptreemux.NewContextMux()
+	app := App{
+		mux:      tmmux,
+		otmux:    otelhttp.NewHandler(tmmux, "request"),
+		shutdown: shutdown,
+		mw:       mw,
+	}
 
 	return &app
 }
