@@ -61,7 +61,7 @@ func (u User) Create(ctx context.Context, traceID string, nu NewUser, now time.T
 	VALUES
 		($1, $2, $3, $4, $5, $6, $7)`
 
-	u.log.Printf("%s : %s : query : %s", traceID, "user.Create",
+	u.log.Printf("%s : %s : QUERY : %s", traceID, "user.Create",
 		database.Log(q, usr.ID, usr.Name, usr.Email, usr.PasswordHash, usr.Roles, usr.DateCreated, usr.DateUpdated),
 	)
 
@@ -77,7 +77,8 @@ func (u User) Update(ctx context.Context, traceID string, claims auth.Claims, us
 
 	usr, err := u.QueryByID(ctx, traceID, claims, userID)
 	if err != nil {
-		return errors.Wrap(err, "updating user")
+		// return errors.Wrap(err, "updating user")
+		return err
 	}
 
 	if uu.Name != nil {
@@ -110,8 +111,8 @@ func (u User) Update(ctx context.Context, traceID string, claims auth.Claims, us
 	WHERE
 		user_id = $1`
 
-	u.log.Printf("%s : %s : query : %s", traceID, "user.Update",
-		database.Log(q, usr),
+	u.log.Printf("%s : %s : QUERY : %s", traceID, "user.Update",
+		database.Log(q, usr.ID, usr.Name, usr.Email, usr.PasswordHash, usr.Roles, usr.DateCreated, usr.DateUpdated),
 	)
 
 	if _, err := u.db.ExecContext(ctx, q, usr.ID, usr.Name, usr.Email, usr.PasswordHash, usr.Roles, usr.DateUpdated); err != nil {
@@ -131,9 +132,9 @@ func (u User) Delete(ctx context.Context, traceID string, userID string) error {
 	DELETE FROM
 		users
 	WHERE
-		user_id = :user_id`
+		user_id = $1`
 
-	u.log.Printf("%s: %s : query : %s", traceID, "user.Delete",
+	u.log.Printf("%s: %s : QUERY : %s", traceID, "user.Delete",
 		database.Log(q, userID),
 	)
 
@@ -145,17 +146,14 @@ func (u User) Delete(ctx context.Context, traceID string, userID string) error {
 }
 
 // Query retrieves a list of existing users from the database.
-func (u User) Query(ctx context.Context, traceID string, pageNumber int, rowsPerPage int) ([]Info, error) {
+func (u User) Query(ctx context.Context, traceID string) ([]Info, error) {
 	const q = `
 	SELECT
 		*
 	FROM
-		users
-	ORDER BY
-		user_id
-	OFFSET :offset ROWS FETCH NEXT :rows_per_page ROWS ONLY`
+		users`
 
-	u.log.Printf("%s: %s: %s", traceID, "user.Query",
+	u.log.Printf("%s : %s : QUERY : %s", traceID, "user.Query",
 		database.Log(q),
 	)
 
@@ -186,7 +184,7 @@ func (u User) QueryByID(ctx context.Context, traceID string, claims auth.Claims,
 	WHERE 
 		user_id = $1`
 
-	u.log.Printf("%s: %s: %s", traceID, "user.QueryByID",
+	u.log.Printf("%s : %s : QUERY : %s", traceID, "user.QueryByID",
 		database.Log(q, userID),
 	)
 
@@ -211,9 +209,9 @@ func (u User) QueryByEmail(ctx context.Context, traceID string, claims auth.Clai
 	FROM
 		users
 	WHERE
-		email = :email`
+		email = $1`
 
-	u.log.Printf("%s: %s: %s", traceID, "user.QueryByEmail",
+	u.log.Printf("%s : %s : QUERY : %s", traceID, "user.QueryByEmail",
 		database.Log(q, email),
 	)
 
