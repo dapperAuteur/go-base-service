@@ -33,7 +33,8 @@ type Handler func(ctx context.Context, w http.ResponseWriter, r *http.Request) e
 // object for each of our http handlers. Feel free to add any configuration
 // data/logic on this App struct.
 type App struct {
-	*httptreemux.ContextMux
+	mux      *httptreemux.ContextMux
+	otmux    http.Handler
 	shutdown chan os.Signal
 	mw       []Middleware
 }
@@ -41,9 +42,9 @@ type App struct {
 // NewApp creates an App value that handle a set of routes for the application.
 func NewApp(shutdown chan os.Signal, mw ...Middleware) *App {
 	app := App{
-		ContextMux: httptreemux.NewContextMux(),
-		shutdown:   shutdown,
-		mw:         mw,
+		mux:      httptreemux.NewContextMux(),
+		shutdown: shutdown,
+		mw:       mw,
 	}
 	return &app
 }
@@ -52,6 +53,14 @@ func NewApp(shutdown chan os.Signal, mw ...Middleware) *App {
 // issue is identified.
 func (a *App) SignalShutdown() {
 	a.shutdown <- syscall.SIGTERM
+}
+
+// ServeHTTP implements the http.Handler interface.
+// It's the entry point for all http traffic and allows the opentelemetry mux to run first to handle tracing.
+// The opentelemetry mux then calls the application mux to handle application traffic.
+// This was setup on line 57? in the NewApp function.
+func (a *App) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	a.otmux.ServeHTTP(w, r)
 }
 
 // Handle
