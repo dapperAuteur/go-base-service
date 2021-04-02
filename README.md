@@ -22,26 +22,6 @@
 # ==============================================================================
 # Building containers
 
-
-==========
-## Testing
-The testing db uses `dbImage = "postgres:13-alpine"`.
-It will need to be updated if the app db is changed.
-
-Tests aren't working. Getting a reflect error:
-This impacts user handler integration tests too.
-```
---- FAIL: TestUser (25.00s)
-panic: reflect: call of github.com/jmoiron/sqlx/reflectx.(*Mapper).TraversalsByNameFunc on string Value [recovered]
-	panic: reflect: call of github.com/jmoiron/sqlx/reflectx.(*Mapper).TraversalsByNameFunc on string Value
-
-goroutine 19 [running]:
-```
-
-run these commands after fixing test issue to see test coverage:
-`go test -cover`
-`go tool cover -html cover.out`
-
 ========
 ## Steps to get Docker, Kubernetes, and etc up and running
 start docker
@@ -64,3 +44,25 @@ run the following commands in this order after the previous command has complete
 
 run curl commands
 at the top of the page
+
+# BUG
+#### Imports
+could not import go.opentelemetry.io/otel/api/trace (no required module provides package
+
+#### Testing
+The testing db uses `dbImage = "postgres:13-alpine"`.
+It will need to be updated if the app db is changed.
+
+Tests aren't working. Getting a reflect error:
+This impacts user handler integration tests too.
+```
+--- FAIL: TestUser (25.00s)
+panic: reflect: call of github.com/jmoiron/sqlx/reflectx.(*Mapper).TraversalsByNameFunc on string Value [recovered]
+	panic: reflect: call of github.com/jmoiron/sqlx/reflectx.(*Mapper).TraversalsByNameFunc on string Value
+
+goroutine 19 [running]:
+```
+
+run these commands after fixing test issue to see test coverage:
+`go test -cover`
+`go tool cover -html cover.out`
