@@ -3,11 +3,15 @@ package tests
 
 import (
 	"context"
+	"crypto/rand"
+	"crypto/rsa"
+	"fmt"
 	"log"
 	"os"
 	"testing"
 	"time"
 
+	"github.com/dapperauteur/go-base-service/business/auth"
 	"github.com/dapperauteur/go-base-service/business/data/schema"
 	"github.com/dapperauteur/go-base-service/foundation/database"
 	"github.com/dapperauteur/go-base-service/foundation/web"
@@ -113,4 +117,58 @@ func StringPointer(s string) *string {
 // useful in some tests.
 func IntPointer(i int) *int {
 	return &i
+}
+
+// Test owns state for running and shutting down tests.
+type Test struct {
+	TraceID string
+	DB      *sqlx.DB
+	Log     *log.Logger
+	Auth    *auth.Auth
+	KID     string
+	// Teardown func()
+
+	t       *testing.T
+	cleanup func()
+}
+
+// NewIntegration creates a database, seeds it, constructs an authenticator.
+func NewIntegration(t *testing.T) *Test {
+	log, db, cleanup := NewUnit(t)
+
+	if err := schema.Seed(db); err != nil {
+		t.Fatal(err)
+	}
+
+	// Create RSA keys to enable authentication in our service.
+	privateKey, err := rsa.GenerateKey(rand.Reader, 2048)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Build an authenticator using this private key and id for the key store.
+	kidID := "4754d86b-7a6d-4df5-9c65-224741361492"
+	lookup := func(kid string) (*rsa.PublicKey, error) {
+		switch kid {
+		case kidID:
+			return &privateKey.PublicKey, nil
+		}
+		return nil, fmt.Errorf("no public key found for the specified kid: %s", kid)
+	}
+	auth, err := auth.New("RS256", lookup, auth.Keys{kidID: privateKey})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	test := Test{
+		TraceID: "00000000-0000-0000-0000-000000000000",
+		DB:      db,
+		Log:     log,
+		Auth:    auth,
+		KID:     kidID,
+		t:       t,
+		cleanup: cleanup,
+	}
+
+	return &test
 }
