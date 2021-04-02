@@ -50,10 +50,10 @@ func NewApp(shutdown chan os.Signal, mw ...Middleware) *App {
 	// This is configured to use the W3C TraceContext standard to set the remote parent if a client request includes the appropriate headers.
 	// https://w3c.github.io/trace-context/
 
-	tmmux := httptreemux.NewContextMux()
+	mux := httptreemux.NewContextMux()
 	app := App{
-		mux:      tmmux,
-		otmux:    otelhttp.NewHandler(tmmux, "request"),
+		mux:      mux,
+		otmux:    otelhttp.NewHandler(mux, "request"),
 		shutdown: shutdown,
 		mw:       mw,
 	}
