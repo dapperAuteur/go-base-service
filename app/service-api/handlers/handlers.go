@@ -8,6 +8,7 @@ import (
 	"os"
 
 	"github.com/dapperauteur/go-base-service/business/auth"
+	"github.com/dapperauteur/go-base-service/business/data/user"
 	"github.com/dapperauteur/go-base-service/business/mid"
 	"github.com/dapperauteur/go-base-service/foundation/web"
 	"github.com/jmoiron/sqlx"
@@ -26,5 +27,17 @@ func API(build string, shutdown chan os.Signal, log *log.Logger, a *auth.Auth, d
 	app.Handle(http.MethodGet, "/readiness", cg.readiness)
 	app.Handle(http.MethodGet, "/liveness", cg.liveness)
 	app.Handle(http.MethodGet, "/testing", cg.liveness, mid.Authenticate(a), mid.Authorize(log, auth.RoleAdmin))
+
+	// Register user management and authentication endpoints.
+	ug := userGroup{
+		store: user.New(log, db),
+		auth:  a,
+	}
+	app.Handle(http.MethodGet, "/v1/users/:page/:rows", ug.query, mid.Authenticate(a), mid.Authorize(log, auth.RoleAdmin))
+	app.Handle(http.MethodGet, "/v1/users/token/:kid", ug.token)
+	app.Handle(http.MethodGet, "/v1/users/:id", ug.queryByID, mid.Authenticate(a))
+	app.Handle(http.MethodPost, "/v1/users", ug.create, mid.Authenticate(a), mid.Authorize(log, auth.RoleAdmin))
+	app.Handle(http.MethodPut, "/v1/users/:id", ug.update, mid.Authenticate(a), mid.Authorize(log, auth.RoleAdmin))
+	app.Handle(http.MethodDelete, "/v1/users/:id", ug.delete, mid.Authenticate(a), mid.Authorize(log, auth.RoleAdmin))
 	return app
 }
