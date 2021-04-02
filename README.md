@@ -4,12 +4,12 @@
 # Testing running system
 
 # For testing a simple query on the system. Don't forget to `make seed` first.
-# curl --user "earl@awews.com:gophers" http://localhost:3000/users/token/54bb2165-71e1-41a6-af3e-7da4a0e1e2c1
+# curl --user "admin@example.com:gophers" http://localhost:3000/users/token/54bb2165-71e1-41a6-af3e-7da4a0e1e2c1
 # export TOKEN="COPY TOKEN STRING FROM LAST CALL"
 # curl -H "Authorization: Bearer ${TOKEN}" http://localhost:3000/users/1/2
 
 # For testing load on the service.
-# hey -m GET -c 100 -n 10000 -H "Authorization: Bearer ${TOKEN}" http://localhost:3000/v1/users/1/2
+# hey -m GET -c 100 -n 10000 -H "Authorization: Bearer ${TOKEN}" http://localhost:3000/users/1/2
 # zipkin: http://localhost:9411
 # expvarmon -ports=":4000" -vars="build,requests,goroutines,errors,mem:memstats.Alloc"
 
@@ -57,6 +57,7 @@ run the following commands in this order after the previous command has complete
 * make all // builds new api image
 * docker images // confirm new api image is built
 * make kind-up
+* make kind-load
 * make kind-services
 * make kind-status
 * make kind-logs
