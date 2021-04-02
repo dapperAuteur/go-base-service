@@ -68,7 +68,7 @@ func (a *App) SignalShutdown() {
 // ServeHTTP implements the http.Handler interface.
 // It's the entry point for all http traffic and allows the opentelemetry mux to run first to handle tracing.
 // The opentelemetry mux then calls the application mux to handle application traffic.
-// This was setup on line 57? in the NewApp function.
+// This was setup on line 56 (otmux:    otelhttp.NewHandler(mux, "request")) in the NewApp function.
 func (a *App) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	a.otmux.ServeHTTP(w, r)
 }
