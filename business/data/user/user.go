@@ -10,6 +10,7 @@ import (
 	"github.com/dapperauteur/go-base-service/business/auth"
 	"github.com/dapperauteur/go-base-service/foundation/database"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"
@@ -234,4 +235,55 @@ func (u User) QueryByEmail(ctx context.Context, traceID string, claims auth.Clai
 	}
 
 	return usr, nil
+}
+
+// Authenticate finds a user by their email and verifies their password.
+// On success it returns a Claims User representing this user.
+// The claims can be used to generate a token for future authentication.
+func (u User) Authenticate(ctx context.Context, traceID string, now time.Time, email, password string) (auth.Claims, error) {
+	data := struct {
+		Email string `db:"email"`
+	}{
+		Email: email,
+	}
+
+	const q = `
+	SELECT
+		*
+	FROM
+		users
+	WHERE
+		email = :email`
+
+	u.log.Printf("%s : %s : QUERY : %s", traceID, "user.Authenticate",
+		database.Log(q, data),
+	)
+
+	var usr Info
+	if err := database.NamedQueryStruct(ctx, u.db, q, data, &usr); err != nil {
+		if err == database.ErrNotFound {
+			return auth.Claims{}, database.ErrNotFound
+		}
+		return auth.Claims{}, errors.Wrapf(err, "selecting user %q", email)
+	}
+
+	// Compare the provided password with the saved hash. Use the bcrypt
+	// comparison function so it is cryptographically secure.
+	if err := bcrypt.CompareHashAndPassword(usr.PasswordHash, []byte(password)); err != nil {
+		return auth.Claims{}, database.ErrAuthenticationFailure
+	}
+
+	// If we are this far the request is valid. Create some claims for the user
+	// and generate their token.
+	claims := auth.Claims{
+		StandardClaims: jwt.StandardClaims{
+			Issuer:    "service project",
+			Subject:   usr.ID,
+			ExpiresAt: now.Add(time.Hour).Unix(),
+			IssuedAt:  now.Unix(),
+		},
+		Roles: usr.Roles,
+	}
+
+	return claims, nil
 }
