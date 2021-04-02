@@ -51,14 +51,12 @@ func NewApp(shutdown chan os.Signal, mw ...Middleware) *App {
 	// https://w3c.github.io/trace-context/
 
 	mux := httptreemux.NewContextMux()
-	app := App{
+	return &App{
 		mux:      mux,
 		otmux:    otelhttp.NewHandler(mux, "request"),
 		shutdown: shutdown,
 		mw:       mw,
 	}
-
-	return &app
 }
 
 // SignalShutdown is used to gracefully shutdown the app when an integrity
