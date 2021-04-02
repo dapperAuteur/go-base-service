@@ -35,8 +35,8 @@ func TestUsers(t *testing.T) {
 	tests := UserTests{
 		app:        handlers.API("develop", shutdown, test.Log, test.Auth, test.DB),
 		kid:        test.KID,
-		userToken:  test.Token(test.KID, "brad@example.com", "thediary"),
-		adminToken: test.Token(test.KID, "earl@awews.com", "dabumble"),
+		userToken:  test.Token(test.KID, "brad@awews.com", "gophers"),
+		adminToken: test.Token(test.KID, "earl@awews.com", "gophers"),
 	}
 
 	// t.Run("getToken200", tests.getToken200)
@@ -59,8 +59,8 @@ func (ut *UserTests) postUser201(t *testing.T) user.Info {
 		Name:            "Earl Stevens",
 		Email:           "earl@awews.com",
 		Roles:           []string{auth.RoleAdmin},
-		Password:        "dabumble",
-		PasswordConfirm: "dabumble",
+		Password:        "gophers",
+		PasswordConfirm: "gophers",
 	}
 
 	body, err := json.Marshal(&nu)
@@ -97,7 +97,7 @@ func (ut *UserTests) postUser201(t *testing.T) user.Info {
 			if diff := cmp.Diff(got, exp); diff != "" {
 				t.Fatalf("\t%s\tTest %d:\tShould get the expected result. Diff:\n%s", tests.Failed, testID, diff)
 			}
-			t.Logf("\t%s\tTest %d:\tShould get the expected result. Diff:\n%s", tests.Success, testID)
+			t.Logf("\t%s\tTest:%d\tShould get the expected result. Diff:\n", tests.Success, testID)
 		}
 	}
 	return got
@@ -117,7 +117,7 @@ func (ut *UserTests) deleteUser204(t *testing.T, id string) {
 		t.Logf("\tTest %d:\tWhen using the new user %s.", testID, id)
 		{
 			if w.Code != http.StatusNoContent {
-				t.Fatalf("\t%s\tTest %d:\tShould receive a status code of 204 for the response : %v", tests.Failed, testID)
+				t.Fatalf("\t%s\tTest %d:\tShould receive a status code of 204 for the response : %v", tests.Failed, testID, w.Code)
 			}
 			t.Logf("\t%s\tTest %d:\tShould receive a status code of 204 for the response.", tests.Success, testID)
 		}
@@ -138,9 +138,9 @@ func (ut *UserTests) getUser200(t *testing.T, id string) {
 		t.Logf("\tTest %d:\tWhen using the new user %s.", testID, id)
 		{
 			if w.Code != http.StatusOK {
-				t.Fatalf("\t%s\tTest %d:\tShould receive a status code of 200 for the response : %v", tests.Failed, testID)
+				t.Fatalf("\t%s\tTest %d:\tShould receive a status code of 200 for the response : %v", tests.Failed, testID, w.Code)
 			}
-			t.Logf("\t%s\tTest %d:\tShould receive a status code of 200 for the response : %v", tests.Success, testID)
+			t.Logf("\t%s\tTest %d:\tShould receive a status code of 200 for the response :", tests.Success, testID)
 
 			var got user.Info
 			if err := json.NewDecoder(w.Body).Decode(&got); err != nil {
@@ -158,7 +158,7 @@ func (ut *UserTests) getUser200(t *testing.T, id string) {
 			if diff := cmp.Diff(got, exp); diff != "" {
 				t.Fatalf("\t%s\tTest %d:\tShould get the expected result. Diff:\n%s", tests.Failed, testID, diff)
 			}
-			t.Logf("\t%s\tTest %d:\tShould get the expected result. Diff:\n%s", tests.Success, testID)
+			t.Logf("\t%s\tTest %d:\tShould get the expected result. Diff:\n", tests.Success, testID)
 		}
 	}
 }
@@ -176,12 +176,12 @@ func (ut *UserTests) putUser204(t *testing.T, id string) {
 	t.Log("Given the need to update a user with the users endpoint.")
 	{
 		testID := 0
-		t.Logf("\tTest %d:\tWhen using the modified user value %s.", testID)
+		t.Logf("\tTest %d:\tWhen using the modified user value.", testID)
 		{
 			if w.Code != http.StatusNoContent {
-				t.Fatalf("\t%s\tTest %d:\tShould receive a status code of 204 for the response : %v", tests.Failed, testID)
+				t.Fatalf("\t%s\tTest %d:\tShould receive a status code of 204 for the response : %v", tests.Failed, testID, w.Code)
 			}
-			t.Logf("\t%s\tTest %d:\tShould receive a status code of 204 for the response : %v", tests.Success, testID)
+			t.Logf("\t%s\tTest %d:\tShould receive a status code of 204 for the response :", tests.Success, testID)
 
 			r = httptest.NewRequest(http.MethodGet, "/users/"+id, nil)
 			w = httptest.NewRecorder()
@@ -190,22 +190,22 @@ func (ut *UserTests) putUser204(t *testing.T, id string) {
 			ut.app.ServeHTTP(w, r)
 
 			if w.Code != http.StatusOK {
-				t.Fatalf("\t%s\tTest %d:\tShould receive a status code of 200 for the retrieve : %v", tests.Failed, testID)
+				t.Fatalf("\t%s\tTest %d:\tShould receive a status code of 200 for the retrieve : %v", tests.Failed, testID, w.Code)
 			}
-			t.Logf("\t%s\tTest %d:\tShould receive a status code of 200 for the retrieve : %v", tests.Success, testID)
+			t.Logf("\t%s\tTest %d:\tShould receive a status code of 200 for the retrieve :", tests.Success, testID)
 
 			var ru user.Info
 			if err := json.NewDecoder(w.Body).Decode(&ru); err != nil {
-				t.Fatalf("\t%s\tTest %d:\tShould be able tounmarshal the response : %v", tests.Failed, testID)
+				t.Fatalf("\t%s\tTest %d:\tShould be able tounmarshal the response : %v", tests.Failed, testID, err)
 			}
 
 			if ru.Name != "E -40" {
-				t.Fatalf("\t%s\tTest %d:\tShould see an updated Name : got %q want %q", tests.Failed, testID)
+				t.Fatalf("\t%s\tTest %d:\tShould see an updated Name : got %q want q", tests.Failed, testID, ru.Name)
 			}
 			t.Logf("\t%s\tTest %d:\tShould see an updated Name.", tests.Success, testID)
 
-			if ru.Name != "earl@awews.com" {
-				t.Fatalf("\t%s\tTest %d:\tShould see an updated Email : got %q want %q", tests.Failed, testID)
+			if ru.Email != "earl@awews.com" {
+				t.Fatalf("\t%s\tTest %d:\tShould see an updated Email : got %q want q", tests.Failed, testID, ru.Email)
 			}
 			t.Logf("\t%s\tTest %d:\tShould see an updated Email.", tests.Success, testID)
 		}
@@ -228,9 +228,9 @@ func (ut *UserTests) putUser403(t *testing.T, id string) {
 		t.Logf("\tTest %d:\tWhen a non-admin user makes a request.", testID)
 		{
 			if w.Code != http.StatusForbidden {
-				t.Fatalf("\t%s\tTest %d:\tShould receive a status code of 403 for the response : %v", tests.Failed, testID)
+				t.Fatalf("\t%s\tTest %d:\tShould receive a status code of 403 for the response : %v", tests.Failed, testID, w.Code)
 			}
-			t.Logf("\t%s\tTest %d:\tShould receive a status code of 403 for the response : %v", tests.Success, testID)
+			t.Logf("\t%s\tTest %d:\tShould receive a status code of 403 for the response :", tests.Success, testID)
 		}
 	}
 }
