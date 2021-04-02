@@ -31,8 +31,8 @@ func TestUser(t *testing.T) {
 				Name:            "awe ful",
 				Email:           "aweful@awews.com",
 				Roles:           []string{auth.RoleAdmin},
-				Password:        "spread love",
-				PasswordConfirm: "spread love",
+				Password:        "spreadlove",
+				PasswordConfirm: "spreadlove",
 			}
 
 			usr, err := u.Create(ctx, traceID, nu, now)
@@ -70,6 +70,7 @@ func TestUser(t *testing.T) {
 			claims = auth.Claims{
 				StandardClaims: jwt.StandardClaims{
 					Issuer:    "service project",
+					Audience:  "students",
 					ExpiresAt: now.Add(time.Hour).Unix(),
 					IssuedAt:  now.Unix(),
 				},
