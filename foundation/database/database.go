@@ -7,7 +7,7 @@ import (
 	_ "github.com/lib/pq" // Calls init function. DB driver in use.
 
 	"context"
-	// "errors"
+	"errors"
 	"fmt"
 	"net/url"
 
@@ -15,6 +15,14 @@ import (
 	"strings"
 
 	"github.com/jmoiron/sqlx"
+)
+
+// Set of error variables for CRUD operations.
+var (
+	ErrNotFound              = errors.New("not found")
+	ErrInvalidID             = errors.New("ID is not in its proper form")
+	ErrAuthenticationFailure = errors.New("authentication failed")
+	ErrForbidden             = errors.New("attempted action is not allowed")
 )
 
 // Config is the required properties to use the database.
@@ -50,6 +58,24 @@ func Open(cfg Config) (*sqlx.DB, error) {
 	}
 
 	return sqlx.Open("postgres", u.String())
+}
+
+// NamedQueryStruct is a helper function for executing queries that return a
+// single value to be unmarshalled into a struct type.
+func NamedQueryStruct(ctx context.Context, db *sqlx.DB, query string, data interface{}, dest interface{}) error {
+	rows, err := db.NamedQueryContext(ctx, query, data)
+	if err != nil {
+		return err
+	}
+	if !rows.Next() {
+		return ErrNotFound
+	}
+
+	if err := rows.StructScan(dest); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func StatusCheck(ctx context.Context, db *sqlx.DB) error {
