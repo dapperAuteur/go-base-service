@@ -29,6 +29,7 @@ The testing db uses `dbImage = "postgres:13-alpine"`.
 It will need to be updated if the app db is changed.
 
 Tests aren't working. Getting a reflect error:
+This impacts user handler integration tests too.
 ```
 --- FAIL: TestUser (25.00s)
 panic: reflect: call of github.com/jmoiron/sqlx/reflectx.(*Mapper).TraversalsByNameFunc on string Value [recovered]
