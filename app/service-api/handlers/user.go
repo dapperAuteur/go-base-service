@@ -7,12 +7,14 @@ import (
 	"strconv"
 
 	"github.com/dapperauteur/go-base-service/business/auth"
+	"github.com/dapperauteur/go-base-service/business/data/user"
 	"github.com/dapperauteur/go-base-service/foundation/web"
+	"github.com/pkg/errors"
 )
 
 type userGroup struct {
-	store user.Store
-	auth  *auth.Auth
+	user user.User
+	auth *auth.Auth
 }
 
 func (ug userGroup) query(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
@@ -30,4 +32,11 @@ func (ug userGroup) query(ctx context.Context, w http.ResponseWriter, r *http.Re
 	if err != nil {
 		return web.NewRequestError(fmt.Errorf("invalid rows format: %s", params["rows"]), http.StatusBadRequest)
 	}
+
+	users, err := ug.user.Query(ctx, v.TraceID, pageNumber, rowsPerPage)
+	if err != nil {
+		return errors.Wrap(err, "unable to query for users")
+	}
+
+	return web.Respond(ctx, w, users, http.StatusOK)
 }
