@@ -46,6 +46,14 @@ func NewApp(shutdown chan os.Signal, mw ...Middleware) *App {
 		shutdown: shutdown,
 		mw:       mw,
 	}
+
+	// Create an OpenTelemetry HTTP Handler which wraps the router.
+	// This will start the initial span and annotate it with information about the request/response.
+	//
+	// This is configured to use the W3C TraceContext standard to set the remote parent if a client request includes the appropriate headers.
+	// https://w3c.github.io/trace-context/
+	app.otmux = otelhttp.NewHandler(app.mux.TreeMux, "request")
+
 	return &app
 }
 
