@@ -9,9 +9,8 @@ import (
 	"time"
 
 	"github.com/dimfeld/httptreemux/v5"
-	"github.com/google/uuid"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
-	_ "go.opentelemetry.io/otel/api/trace"
+	"go.opentelemetry.io/otel/api/trace"
 )
 
 // ctxKey represents the type of value for the context key.
@@ -84,13 +83,18 @@ func (a *App) Handle(method string, path string, handler Handler, mw ...Middlewa
 
 	h := func(w http.ResponseWriter, r *http.Request) {
 
+		// Start or expand a distributed trace.
+		ctx := r.Context()
+		ctx, span := trace.SpanFromContext(ctx).Tracer().Start(ctx, r.URL.Path)
+		defer span.End()
+
 		// Set the context with the required values to
 		// process the request.
 		v := Values{
-			TraceID: uuid.New().String(),
+			TraceID: span.SpanContext().TraceID.String(),
 			Now:     time.Now(),
 		}
-		ctx := context.WithValue(r.Context(), KeyValues, &v)
+		ctx = context.WithValue(ctx, KeyValues, &v)
 
 		// r is the readiness function in check.go (check.readiness)
 		if err := handler(ctx, w, r); err != nil {
@@ -102,5 +106,5 @@ func (a *App) Handle(method string, path string, handler Handler, mw ...Middlewa
 		// BOILERPLATE
 	}
 
-	a.ContextMux.Handle(method, path, h)
+	a.mux.Handle(method, path, h)
 }
